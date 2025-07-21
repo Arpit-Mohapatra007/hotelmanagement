@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "82104855247",
+    "project_id": "hotelmanagement-dreadx",
+    "storage_bucket": "hotelmanagement-dreadx.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82104855247:android:acb9f83be6a689bb6265ba",
+        "android_client_info": {
+          "package_name": "com.example.hotelmanagement"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlRrWI_MRWMWV2v_soFUMYO99PKdadQPo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

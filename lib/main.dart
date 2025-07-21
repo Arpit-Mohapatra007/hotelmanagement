@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hotelmanagment/customer/dashboard.dart';
-import 'package:hotelmanagment/customer/table_number.dart';
-import 'package:hotelmanagment/staff/accountant/dashboard.dart';
-import 'package:hotelmanagment/staff/admin/dashboard.dart';
-import 'package:hotelmanagment/staff/chef/dashboard.dart';
-import 'package:hotelmanagment/staff/inventory_managment/dashboard.dart';
+import 'package:hotelmanagement/customer/dashboard.dart';
 
 void main() {
  runApp(
