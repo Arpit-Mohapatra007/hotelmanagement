@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hotelmanagement/customer/dashboard.dart';
+import 'package:hotelmanagement/features/staff/customer/views/customer_dashboard.dart';
+
 
 void main() {
  runApp(

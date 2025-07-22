@@ -42,10 +42,13 @@ class CustomerDashboard extends HookWidget {
               //Hot Deal or Bestseller item 
             },
             child: Container(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(16.0),
               height: MediaQuery.of(context).size.height * 0.3,
               width: MediaQuery.of(context).size.width * 0.95,
-              color: Colors.grey[200],
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                color: Colors.grey[200],
+              ),
             ),
           ),
         const SizedBox(height: 10.0),
