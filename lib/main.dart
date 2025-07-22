@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hotelmanagement/features/staff/customer/views/customer_dashboard.dart';
 
 
 void main() {
  runApp(
-  const App()
+  ProviderScope(
+    child: const App()
+    )
  );
 }
 
