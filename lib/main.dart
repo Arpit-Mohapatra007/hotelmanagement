@@ -1,9 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hotelmanagement/features/staff/customer/views/customer_dashboard.dart';
+import 'package:hotelmanagement/features/customer/views/customer_dashboard.dart';
 
 
-void main() {
+void main() async {
+ WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();  
  runApp(
   ProviderScope(
     child: const App()
