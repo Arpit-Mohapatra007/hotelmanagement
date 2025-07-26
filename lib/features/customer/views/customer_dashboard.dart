@@ -9,6 +9,7 @@ class CustomerDashboard extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = useTextEditingController();
+    final searchQuery = ref.watch(dishSearchQueryProvider);
     final dishesAsync = ref.watch(dishesProvider);
     return Scaffold(
       appBar: AppBar(
@@ -24,7 +25,7 @@ class CustomerDashboard extends HookConsumerWidget {
                 child: TextField(
                   controller: controller,
                   decoration: const InputDecoration(
-                    labelText: 'Search',
+                    labelText: 'Search your dish',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -32,7 +33,9 @@ class CustomerDashboard extends HookConsumerWidget {
               const SizedBox(width: 8.0),
               ElevatedButton(
                 onPressed: () {
-                  // Handle search action
+                  ref.read(dishSearchQueryProvider.notifier).state = 
+                    controller.text.trim();
+                  controller.clear(); 
                 },
                 child: Icon(Icons.search),
               ),
@@ -55,23 +58,29 @@ class CustomerDashboard extends HookConsumerWidget {
             ),
           ),
         const SizedBox(height: 10.0),
+        Text('Menu', style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 10.0), 
         Expanded(
           child: dishesAsync.when(
             data: (dishes) {
-              if (dishes.isEmpty) {
-                return const Center(child: Text('No dishes available'));
+              final filteredDishes = searchQuery.isEmpty?
+                dishes:
+                dishes.where((dish) => dish.name.toLowerCase().contains(searchQuery.toLowerCase())||
+                dish.category.toLowerCase().contains(searchQuery.toLowerCase())).toList();
+              if (filteredDishes.isEmpty) {
+                return const Center(child: Text('No dishes found for the search query'));
               }
               return ListView.builder(
-                itemCount: dishes.length,
+                itemCount: filteredDishes.length,
                 itemBuilder: (context, index) {
-                  final dish = dishes[index];
+                  final dish = filteredDishes[index];
                   return ListTile(
-                    title: Text(dish.name),
-                    subtitle: Text(dish.description),
+                    title: Text(dish.name, style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+                    subtitle: Text(dish.description, style: TextStyle(fontSize: 14.0, color: Colors.grey[300])),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(dish.price.toString()),
+                        Text('€${dish.price.toString()}', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
                         const SizedBox(width: 8.0),
                         IconButton(
                           icon: const Icon(Icons.add_shopping_cart),

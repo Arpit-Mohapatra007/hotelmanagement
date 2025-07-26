@@ -14,6 +14,13 @@ final dishesProvider = StreamProvider<List<Dish>>((ref) {
   return repository.getDishes();
 });
 
+final searchDishesProvider = FutureProvider.family<List<Dish>, String>((ref, query) {
+  final repository = ref.watch(dishRepositoryProvider);
+  return repository.searchDishes(query);
+});
+
+final dishSearchQueryProvider = StateProvider<String>((ref) => '');
+
 final dishByIdProvider = FutureProvider.family<Dish?, String>((ref, id) {
   final repository = ref.watch(dishRepositoryProvider);
   return repository.getDishById(id);

@@ -42,6 +42,16 @@ class DishRepository {
     );
    }
 
+  Future<List<Dish>> searchDishes(String query) async {
+  final snapshot = await firestore.collection('dishes')
+    .where('name', isGreaterThanOrEqualTo: query)
+    .where('name', isLessThanOrEqualTo: '$query\uf8ff')
+    .get();
+  return snapshot.docs.map((doc) => Dish.fromJson(doc.data()..['id'] = doc.id)).toList();
+}
+
+
+
   Future<void> updateDishAvailability(String id, bool isAvailable) { 
     return firestore.collection('dishes').doc(id).update({'isAvailable': isAvailable});
    }
