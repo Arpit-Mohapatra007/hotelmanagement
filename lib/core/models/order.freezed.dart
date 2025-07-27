@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Order {
 
- String get orderId; List<String> get dishIds; List<String> get dishNames; int get quantity; double get price; String get timeStamp; String get status; String get specialInstructions;
+ String get tableId; String get orderId; List<String> get dishIds; List<String> get dishNames; int get quantity; double get price; String get timeStamp; String get status; String? get specialInstructions;
 /// Create a copy of Order
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $OrderCopyWith<Order> get copyWith => _$OrderCopyWithImpl<Order>(this as Order, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Order&&(identical(other.orderId, orderId) || other.orderId == orderId)&&const DeepCollectionEquality().equals(other.dishIds, dishIds)&&const DeepCollectionEquality().equals(other.dishNames, dishNames)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.price, price) || other.price == price)&&(identical(other.timeStamp, timeStamp) || other.timeStamp == timeStamp)&&(identical(other.status, status) || other.status == status)&&(identical(other.specialInstructions, specialInstructions) || other.specialInstructions == specialInstructions));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Order&&(identical(other.tableId, tableId) || other.tableId == tableId)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&const DeepCollectionEquality().equals(other.dishIds, dishIds)&&const DeepCollectionEquality().equals(other.dishNames, dishNames)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.price, price) || other.price == price)&&(identical(other.timeStamp, timeStamp) || other.timeStamp == timeStamp)&&(identical(other.status, status) || other.status == status)&&(identical(other.specialInstructions, specialInstructions) || other.specialInstructions == specialInstructions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,orderId,const DeepCollectionEquality().hash(dishIds),const DeepCollectionEquality().hash(dishNames),quantity,price,timeStamp,status,specialInstructions);
+int get hashCode => Object.hash(runtimeType,tableId,orderId,const DeepCollectionEquality().hash(dishIds),const DeepCollectionEquality().hash(dishNames),quantity,price,timeStamp,status,specialInstructions);
 
 @override
 String toString() {
-  return 'Order(orderId: $orderId, dishIds: $dishIds, dishNames: $dishNames, quantity: $quantity, price: $price, timeStamp: $timeStamp, status: $status, specialInstructions: $specialInstructions)';
+  return 'Order(tableId: $tableId, orderId: $orderId, dishIds: $dishIds, dishNames: $dishNames, quantity: $quantity, price: $price, timeStamp: $timeStamp, status: $status, specialInstructions: $specialInstructions)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $OrderCopyWith<$Res>  {
   factory $OrderCopyWith(Order value, $Res Function(Order) _then) = _$OrderCopyWithImpl;
 @useResult
 $Res call({
- String orderId, List<String> dishIds, List<String> dishNames, int quantity, double price, String timeStamp, String status, String specialInstructions
+ String tableId, String orderId, List<String> dishIds, List<String> dishNames, int quantity, double price, String timeStamp, String status, String? specialInstructions
 });
 
 
@@ -65,17 +65,18 @@ class _$OrderCopyWithImpl<$Res>
 
 /// Create a copy of Order
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? orderId = null,Object? dishIds = null,Object? dishNames = null,Object? quantity = null,Object? price = null,Object? timeStamp = null,Object? status = null,Object? specialInstructions = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? tableId = null,Object? orderId = null,Object? dishIds = null,Object? dishNames = null,Object? quantity = null,Object? price = null,Object? timeStamp = null,Object? status = null,Object? specialInstructions = freezed,}) {
   return _then(_self.copyWith(
-orderId: null == orderId ? _self.orderId : orderId // ignore: cast_nullable_to_non_nullable
+tableId: null == tableId ? _self.tableId : tableId // ignore: cast_nullable_to_non_nullable
+as String,orderId: null == orderId ? _self.orderId : orderId // ignore: cast_nullable_to_non_nullable
 as String,dishIds: null == dishIds ? _self.dishIds : dishIds // ignore: cast_nullable_to_non_nullable
 as List<String>,dishNames: null == dishNames ? _self.dishNames : dishNames // ignore: cast_nullable_to_non_nullable
 as List<String>,quantity: null == quantity ? _self.quantity : quantity // ignore: cast_nullable_to_non_nullable
 as int,price: null == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
 as double,timeStamp: null == timeStamp ? _self.timeStamp : timeStamp // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String,specialInstructions: null == specialInstructions ? _self.specialInstructions : specialInstructions // ignore: cast_nullable_to_non_nullable
-as String,
+as String,specialInstructions: freezed == specialInstructions ? _self.specialInstructions : specialInstructions // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -160,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String orderId,  List<String> dishIds,  List<String> dishNames,  int quantity,  double price,  String timeStamp,  String status,  String specialInstructions)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String tableId,  String orderId,  List<String> dishIds,  List<String> dishNames,  int quantity,  double price,  String timeStamp,  String status,  String? specialInstructions)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Order() when $default != null:
-return $default(_that.orderId,_that.dishIds,_that.dishNames,_that.quantity,_that.price,_that.timeStamp,_that.status,_that.specialInstructions);case _:
+return $default(_that.tableId,_that.orderId,_that.dishIds,_that.dishNames,_that.quantity,_that.price,_that.timeStamp,_that.status,_that.specialInstructions);case _:
   return orElse();
 
 }
@@ -181,10 +182,10 @@ return $default(_that.orderId,_that.dishIds,_that.dishNames,_that.quantity,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String orderId,  List<String> dishIds,  List<String> dishNames,  int quantity,  double price,  String timeStamp,  String status,  String specialInstructions)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String tableId,  String orderId,  List<String> dishIds,  List<String> dishNames,  int quantity,  double price,  String timeStamp,  String status,  String? specialInstructions)  $default,) {final _that = this;
 switch (_that) {
 case _Order():
-return $default(_that.orderId,_that.dishIds,_that.dishNames,_that.quantity,_that.price,_that.timeStamp,_that.status,_that.specialInstructions);case _:
+return $default(_that.tableId,_that.orderId,_that.dishIds,_that.dishNames,_that.quantity,_that.price,_that.timeStamp,_that.status,_that.specialInstructions);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +202,10 @@ return $default(_that.orderId,_that.dishIds,_that.dishNames,_that.quantity,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String orderId,  List<String> dishIds,  List<String> dishNames,  int quantity,  double price,  String timeStamp,  String status,  String specialInstructions)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String tableId,  String orderId,  List<String> dishIds,  List<String> dishNames,  int quantity,  double price,  String timeStamp,  String status,  String? specialInstructions)?  $default,) {final _that = this;
 switch (_that) {
 case _Order() when $default != null:
-return $default(_that.orderId,_that.dishIds,_that.dishNames,_that.quantity,_that.price,_that.timeStamp,_that.status,_that.specialInstructions);case _:
+return $default(_that.tableId,_that.orderId,_that.dishIds,_that.dishNames,_that.quantity,_that.price,_that.timeStamp,_that.status,_that.specialInstructions);case _:
   return null;
 
 }
@@ -216,9 +217,10 @@ return $default(_that.orderId,_that.dishIds,_that.dishNames,_that.quantity,_that
 @JsonSerializable()
 
 class _Order implements Order {
-  const _Order({required this.orderId, required final  List<String> dishIds, required final  List<String> dishNames, required this.quantity, required this.price, required this.timeStamp, required this.status, required this.specialInstructions}): _dishIds = dishIds,_dishNames = dishNames;
+  const _Order({required this.tableId, required this.orderId, required final  List<String> dishIds, required final  List<String> dishNames, required this.quantity, required this.price, required this.timeStamp, required this.status, required this.specialInstructions}): _dishIds = dishIds,_dishNames = dishNames;
   factory _Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 
+@override final  String tableId;
 @override final  String orderId;
  final  List<String> _dishIds;
 @override List<String> get dishIds {
@@ -238,7 +240,7 @@ class _Order implements Order {
 @override final  double price;
 @override final  String timeStamp;
 @override final  String status;
-@override final  String specialInstructions;
+@override final  String? specialInstructions;
 
 /// Create a copy of Order
 /// with the given fields replaced by the non-null parameter values.
@@ -253,16 +255,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Order&&(identical(other.orderId, orderId) || other.orderId == orderId)&&const DeepCollectionEquality().equals(other._dishIds, _dishIds)&&const DeepCollectionEquality().equals(other._dishNames, _dishNames)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.price, price) || other.price == price)&&(identical(other.timeStamp, timeStamp) || other.timeStamp == timeStamp)&&(identical(other.status, status) || other.status == status)&&(identical(other.specialInstructions, specialInstructions) || other.specialInstructions == specialInstructions));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Order&&(identical(other.tableId, tableId) || other.tableId == tableId)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&const DeepCollectionEquality().equals(other._dishIds, _dishIds)&&const DeepCollectionEquality().equals(other._dishNames, _dishNames)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.price, price) || other.price == price)&&(identical(other.timeStamp, timeStamp) || other.timeStamp == timeStamp)&&(identical(other.status, status) || other.status == status)&&(identical(other.specialInstructions, specialInstructions) || other.specialInstructions == specialInstructions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,orderId,const DeepCollectionEquality().hash(_dishIds),const DeepCollectionEquality().hash(_dishNames),quantity,price,timeStamp,status,specialInstructions);
+int get hashCode => Object.hash(runtimeType,tableId,orderId,const DeepCollectionEquality().hash(_dishIds),const DeepCollectionEquality().hash(_dishNames),quantity,price,timeStamp,status,specialInstructions);
 
 @override
 String toString() {
-  return 'Order(orderId: $orderId, dishIds: $dishIds, dishNames: $dishNames, quantity: $quantity, price: $price, timeStamp: $timeStamp, status: $status, specialInstructions: $specialInstructions)';
+  return 'Order(tableId: $tableId, orderId: $orderId, dishIds: $dishIds, dishNames: $dishNames, quantity: $quantity, price: $price, timeStamp: $timeStamp, status: $status, specialInstructions: $specialInstructions)';
 }
 
 
@@ -273,7 +275,7 @@ abstract mixin class _$OrderCopyWith<$Res> implements $OrderCopyWith<$Res> {
   factory _$OrderCopyWith(_Order value, $Res Function(_Order) _then) = __$OrderCopyWithImpl;
 @override @useResult
 $Res call({
- String orderId, List<String> dishIds, List<String> dishNames, int quantity, double price, String timeStamp, String status, String specialInstructions
+ String tableId, String orderId, List<String> dishIds, List<String> dishNames, int quantity, double price, String timeStamp, String status, String? specialInstructions
 });
 
 
@@ -290,17 +292,18 @@ class __$OrderCopyWithImpl<$Res>
 
 /// Create a copy of Order
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? orderId = null,Object? dishIds = null,Object? dishNames = null,Object? quantity = null,Object? price = null,Object? timeStamp = null,Object? status = null,Object? specialInstructions = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? tableId = null,Object? orderId = null,Object? dishIds = null,Object? dishNames = null,Object? quantity = null,Object? price = null,Object? timeStamp = null,Object? status = null,Object? specialInstructions = freezed,}) {
   return _then(_Order(
-orderId: null == orderId ? _self.orderId : orderId // ignore: cast_nullable_to_non_nullable
+tableId: null == tableId ? _self.tableId : tableId // ignore: cast_nullable_to_non_nullable
+as String,orderId: null == orderId ? _self.orderId : orderId // ignore: cast_nullable_to_non_nullable
 as String,dishIds: null == dishIds ? _self._dishIds : dishIds // ignore: cast_nullable_to_non_nullable
 as List<String>,dishNames: null == dishNames ? _self._dishNames : dishNames // ignore: cast_nullable_to_non_nullable
 as List<String>,quantity: null == quantity ? _self.quantity : quantity // ignore: cast_nullable_to_non_nullable
 as int,price: null == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
 as double,timeStamp: null == timeStamp ? _self.timeStamp : timeStamp // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String,specialInstructions: null == specialInstructions ? _self.specialInstructions : specialInstructions // ignore: cast_nullable_to_non_nullable
-as String,
+as String,specialInstructions: freezed == specialInstructions ? _self.specialInstructions : specialInstructions // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
