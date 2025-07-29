@@ -9,11 +9,9 @@ part of 'order.dart';
 _Order _$OrderFromJson(Map<String, dynamic> json) => _Order(
   tableId: json['tableId'] as String,
   orderId: json['orderId'] as String,
-  dishIds: (json['dishIds'] as List<dynamic>).map((e) => e as String).toList(),
-  dishNames: (json['dishNames'] as List<dynamic>)
-      .map((e) => e as String)
+  dishes: (json['dishes'] as List<dynamic>)
+      .map((e) => Dish.fromJson(e as Map<String, dynamic>))
       .toList(),
-  quantity: (json['quantity'] as num).toInt(),
   price: (json['price'] as num).toDouble(),
   timeStamp: json['timeStamp'] as String,
   status: json['status'] as String,
@@ -23,9 +21,7 @@ _Order _$OrderFromJson(Map<String, dynamic> json) => _Order(
 Map<String, dynamic> _$OrderToJson(_Order instance) => <String, dynamic>{
   'tableId': instance.tableId,
   'orderId': instance.orderId,
-  'dishIds': instance.dishIds,
-  'dishNames': instance.dishNames,
-  'quantity': instance.quantity,
+  'dishes': instance.dishes,
   'price': instance.price,
   'timeStamp': instance.timeStamp,
   'status': instance.status,

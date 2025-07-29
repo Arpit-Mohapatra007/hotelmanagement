@@ -10,7 +10,9 @@ _Table _$TableFromJson(Map<String, dynamic> json) => _Table(
   tableId: json['tableId'] as String,
   tableNumber: json['tableNumber'] as String,
   status: json['status'] as String,
-  orders: (json['orders'] as List<dynamic>).map((e) => e as String).toList(),
+  orders: (json['orders'] as List<dynamic>)
+      .map((e) => Order.fromJson(e as Map<String, dynamic>))
+      .toList(),
   currentBill: (json['currentBill'] as num).toDouble(),
   capacity: (json['capacity'] as num).toInt(),
   sessionInfo: json['sessionInfo'] as String,

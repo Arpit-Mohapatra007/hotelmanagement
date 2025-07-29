@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Table {
 
- String get tableId; String get tableNumber; String get status; List<String> get orders; double get currentBill; int get capacity; String get sessionInfo;
+ String get tableId; String get tableNumber; String get status; List<Order> get orders; double get currentBill; int get capacity; String get sessionInfo;
 /// Create a copy of Table
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $TableCopyWith<$Res>  {
   factory $TableCopyWith(Table value, $Res Function(Table) _then) = _$TableCopyWithImpl;
 @useResult
 $Res call({
- String tableId, String tableNumber, String status, List<String> orders, double currentBill, int capacity, String sessionInfo
+ String tableId, String tableNumber, String status, List<Order> orders, double currentBill, int capacity, String sessionInfo
 });
 
 
@@ -71,7 +71,7 @@ tableId: null == tableId ? _self.tableId : tableId // ignore: cast_nullable_to_n
 as String,tableNumber: null == tableNumber ? _self.tableNumber : tableNumber // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String,orders: null == orders ? _self.orders : orders // ignore: cast_nullable_to_non_nullable
-as List<String>,currentBill: null == currentBill ? _self.currentBill : currentBill // ignore: cast_nullable_to_non_nullable
+as List<Order>,currentBill: null == currentBill ? _self.currentBill : currentBill // ignore: cast_nullable_to_non_nullable
 as double,capacity: null == capacity ? _self.capacity : capacity // ignore: cast_nullable_to_non_nullable
 as int,sessionInfo: null == sessionInfo ? _self.sessionInfo : sessionInfo // ignore: cast_nullable_to_non_nullable
 as String,
@@ -159,7 +159,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String tableId,  String tableNumber,  String status,  List<String> orders,  double currentBill,  int capacity,  String sessionInfo)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String tableId,  String tableNumber,  String status,  List<Order> orders,  double currentBill,  int capacity,  String sessionInfo)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Table() when $default != null:
 return $default(_that.tableId,_that.tableNumber,_that.status,_that.orders,_that.currentBill,_that.capacity,_that.sessionInfo);case _:
@@ -180,7 +180,7 @@ return $default(_that.tableId,_that.tableNumber,_that.status,_that.orders,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String tableId,  String tableNumber,  String status,  List<String> orders,  double currentBill,  int capacity,  String sessionInfo)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String tableId,  String tableNumber,  String status,  List<Order> orders,  double currentBill,  int capacity,  String sessionInfo)  $default,) {final _that = this;
 switch (_that) {
 case _Table():
 return $default(_that.tableId,_that.tableNumber,_that.status,_that.orders,_that.currentBill,_that.capacity,_that.sessionInfo);case _:
@@ -200,7 +200,7 @@ return $default(_that.tableId,_that.tableNumber,_that.status,_that.orders,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String tableId,  String tableNumber,  String status,  List<String> orders,  double currentBill,  int capacity,  String sessionInfo)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String tableId,  String tableNumber,  String status,  List<Order> orders,  double currentBill,  int capacity,  String sessionInfo)?  $default,) {final _that = this;
 switch (_that) {
 case _Table() when $default != null:
 return $default(_that.tableId,_that.tableNumber,_that.status,_that.orders,_that.currentBill,_that.capacity,_that.sessionInfo);case _:
@@ -215,14 +215,14 @@ return $default(_that.tableId,_that.tableNumber,_that.status,_that.orders,_that.
 @JsonSerializable()
 
 class _Table implements Table {
-  const _Table({required this.tableId, required this.tableNumber, required this.status, required final  List<String> orders, required this.currentBill, required this.capacity, required this.sessionInfo}): _orders = orders;
+  const _Table({required this.tableId, required this.tableNumber, required this.status, required final  List<Order> orders, required this.currentBill, required this.capacity, required this.sessionInfo}): _orders = orders;
   factory _Table.fromJson(Map<String, dynamic> json) => _$TableFromJson(json);
 
 @override final  String tableId;
 @override final  String tableNumber;
 @override final  String status;
- final  List<String> _orders;
-@override List<String> get orders {
+ final  List<Order> _orders;
+@override List<Order> get orders {
   if (_orders is EqualUnmodifiableListView) return _orders;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_orders);
@@ -265,7 +265,7 @@ abstract mixin class _$TableCopyWith<$Res> implements $TableCopyWith<$Res> {
   factory _$TableCopyWith(_Table value, $Res Function(_Table) _then) = __$TableCopyWithImpl;
 @override @useResult
 $Res call({
- String tableId, String tableNumber, String status, List<String> orders, double currentBill, int capacity, String sessionInfo
+ String tableId, String tableNumber, String status, List<Order> orders, double currentBill, int capacity, String sessionInfo
 });
 
 
@@ -288,7 +288,7 @@ tableId: null == tableId ? _self.tableId : tableId // ignore: cast_nullable_to_n
 as String,tableNumber: null == tableNumber ? _self.tableNumber : tableNumber // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String,orders: null == orders ? _self._orders : orders // ignore: cast_nullable_to_non_nullable
-as List<String>,currentBill: null == currentBill ? _self.currentBill : currentBill // ignore: cast_nullable_to_non_nullable
+as List<Order>,currentBill: null == currentBill ? _self.currentBill : currentBill // ignore: cast_nullable_to_non_nullable
 as double,capacity: null == capacity ? _self.capacity : capacity // ignore: cast_nullable_to_non_nullable
 as int,sessionInfo: null == sessionInfo ? _self.sessionInfo : sessionInfo // ignore: cast_nullable_to_non_nullable
 as String,

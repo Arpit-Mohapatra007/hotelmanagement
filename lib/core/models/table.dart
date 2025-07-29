@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hotelmanagement/core/models/order.dart';
 part 'table.freezed.dart';
 part 'table.g.dart';
 
@@ -8,7 +9,7 @@ abstract class Table with _$Table {
     required String tableId,
     required String tableNumber,
     required String status,
-    required List<String> orders,
+    required List<Order> orders,
     required double currentBill,
     required int capacity,
     required String sessionInfo,
