@@ -7,9 +7,9 @@ import 'package:hotelmanagement/features/customer/providers/current_order_provid
 import 'package:hotelmanagement/features/order/order_provider.dart';
 import 'package:hotelmanagement/features/table/table_provider.dart';
 
-class CutomerCart extends HookConsumerWidget {
+class CustomerCart extends HookConsumerWidget {
   final String tableNumber;
-  const CutomerCart({super.key, required this.tableNumber});
+  const CustomerCart({super.key, required this.tableNumber});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -153,29 +153,33 @@ class CutomerCart extends HookConsumerWidget {
                       ? null // Disable button if order is empty or table data is not loaded
                       : () async {
                           final currentTable = tableAsync.value!; // Safe to use due to hasValue check
-                          final newOrder = Order(
-                            tableId: currentTable.tableId,
-                            orderId: '${currentTable.tableId}_order_${DateTime.now().millisecondsSinceEpoch}',
-                            dishes: currentOrderDishes,
-                            price: currentOrderTotal,
-                            timeStamp: DateTime.now().toIso8601String(),
-                            status: 'prepairing', // Initial status
-                            specialInstructions: currentSpecialInstructions,
-                          );
-
+                          
                           try {
-                            // Use addOrderProvider to add the order to Firestore
+                            // Create the order with proper error handling
+                            final newOrder = Order(
+                              tableId: currentTable.tableId,
+                              orderId: '${currentTable.tableId}_order_${DateTime.now().millisecondsSinceEpoch}',
+                              dishes: List<Dish>.from(currentOrderDishes), // Ensure proper list type
+                              price: currentOrderTotal,
+                              timeStamp: DateTime.now().toIso8601String(),
+                              status: 'preparing', // Fixed typo: 'prepairing' -> 'preparing'
+                              specialInstructions: currentSpecialInstructions,
+                            );
+                            
+                            
+                            // Add order to its own 'orders' collection
                             await ref.read(addOrderProvider(newOrder).future);
-                            // Add the order to the table in Firestore, ensuring it's converted to JSON
+                            
+                            // Add the order to the table's 'orders' array in Firestore
                             await ref.read(addOrderToTableProvider(
-                              {'tableNumber': currentTable.tableNumber, 'order': newOrder.toJson()} // Pass Order object as JSON
+                              (tableNumber: currentTable.tableNumber, order: newOrder)
                             ).future);
 
-                            ref.read(currentOrderProvider.notifier).clearOrder(); // Clear cart after submission
+                            ref.read(currentOrderProvider.notifier).clearOrder();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Order placed successfully!')),
                             );
-                            Navigator.of(context).pop(); // Go back to dashboard
+                            Navigator.of(context).pop();
                           } catch (e) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Failed to place order: $e')),

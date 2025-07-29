@@ -25,15 +25,13 @@ final getTableByNumberProvider = FutureProvider.autoDispose.family<model.Table?,
   return repository.getTableByNumber(tableNumber);
 });
 
-// MODIFIED: Changed parameter type to accept Order directly
-final addOrderToTableProvider = FutureProvider.autoDispose.family<void, Map<String, dynamic>>((ref, params) {
+final addOrderToTableProvider = FutureProvider.autoDispose.family<void, ({String tableNumber, Order order})>((ref, args) {
   final repository = ref.watch(tableRepositoryProvider);
-  final tableNumber = params['tableNumber'] as String;
-  final order = params['order'] as Order; // Now expects an Order object
-  return repository.addOrderToTable(tableNumber, order);
+  // No more manual casting from Map, directly use the typed arguments
+  return repository.addOrderToTable(args.tableNumber, args.order);
 });
 
-// MODIFIED: Changed return type to List<Order>
+
 final getOrdersForTableProvider = StreamProvider.autoDispose.family<List<Order>, String>((ref, tableNumber) {
   final repository = ref.watch(tableRepositoryProvider);
   return repository.getOrdersForTable(tableNumber);

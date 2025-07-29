@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hotelmanagement/features/customer/views/customer_dashboard.dart';
-import 'package:hotelmanagement/features/customer/views/cutomer_cart.dart';
+import 'package:hotelmanagement/features/customer/views/customer_cart.dart';
 
 // Define route names for easy access
 class AppRouteNames {
@@ -28,7 +28,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             name: AppRouteNames.customerCart,
             builder: (context, state) {
               final tableNumber = state.pathParameters['tableNumber'];
-              return CutomerCart(tableNumber: tableNumber!);
+              return CustomerCart(tableNumber: tableNumber!);
             },
           ),
         ],
