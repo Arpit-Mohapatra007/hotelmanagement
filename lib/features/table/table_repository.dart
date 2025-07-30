@@ -75,6 +75,14 @@ class TableRepository {
     });
   }
 
+  //check if table exists
+  Future<bool> checkTableExists(String tableNumber) async {
+    return FirebaseFirestore.instance
+        .collection('tables')
+        .doc(tableNumber)
+        .get().then((doc) => doc.exists);
+  }
+
   Future updateOrderInTable(String tableNumber, Order updatedOrder) async {
     final tableRef =
         FirebaseFirestore.instance.collection('tables').doc(tableNumber);

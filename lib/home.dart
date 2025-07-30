@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hotelmanagement/core/router/router.dart';
 
 class HomePage extends StatelessWidget {
  const HomePage({super.key});
@@ -12,14 +14,18 @@ class HomePage extends StatelessWidget {
     children: [
        TextButton(
         onPressed: (){
-          // This is where you would handle the button press for Customer
-        }, 
+          context.goNamed(
+            AppRouteNames.tableLogin
+          );
+            }, 
         child: const Text('Customer')
       ),
         TextButton(
           onPressed: (){
-            // This is where you would handle the button press for Staff
-          }, 
+            context.goNamed(
+              AppRouteNames.login
+            );
+             }, 
           child: const Text('Staff')
         ),
     ],
