@@ -27,6 +27,12 @@ final addOrderProvider = FutureProvider.autoDispose.family<void, Order>((ref, or
   return repository.addOrder(order);
 });
 
+final updateOrderProvider =
+    FutureProvider.autoDispose.family<void, Order>((ref, order) {
+  final repository = ref.watch(orderRepositoryProvider);
+  return repository.updateOrder(order);
+});
+
 final addDishToOrderProvider = FutureProvider.autoDispose.family<void, Map<String, dynamic>>((ref, args) {
   final repository = ref.watch(orderRepositoryProvider);
   final orderId = args['orderId'] as String;

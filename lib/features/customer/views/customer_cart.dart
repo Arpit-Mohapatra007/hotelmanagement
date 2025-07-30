@@ -6,6 +6,7 @@ import 'package:hotelmanagement/core/models/dish.dart';
 import 'package:hotelmanagement/features/customer/providers/current_order_provider.dart';
 import 'package:hotelmanagement/features/order/order_provider.dart';
 import 'package:hotelmanagement/features/table/table_provider.dart';
+import 'package:collection/collection.dart';
 
 class CustomerCart extends HookConsumerWidget {
   final String tableNumber;
@@ -21,6 +22,14 @@ class CustomerCart extends HookConsumerWidget {
 
     // Watch the table data to get tableId for placing order
     final tableAsync = ref.watch(getTableByNumberProvider(tableNumber));
+
+    // Add this to find the active order (if any)
+    Order? activeOrder;
+    if (tableAsync.hasValue && tableAsync.value != null) {
+      activeOrder = tableAsync.value!.orders.firstWhereOrNull(
+        (o) => o.status == 'pending' || o.status == 'preparing',
+      );
+    }
 
     // Create a map to store unique dishes and their quantities for display
     final Map<Dish, int> dishQuantities = {};
@@ -150,42 +159,58 @@ class CustomerCart extends HookConsumerWidget {
                 const SizedBox(height: 16.0),
                 ElevatedButton.icon(
                     onPressed: currentOrderDishes.isEmpty || !tableAsync.hasValue
-                      ? null // Disable button if order is empty or table data is not loaded
-                      : () async {
-                          final currentTable = tableAsync.value!; // Safe to use due to hasValue check
-                          
-                          try {
-                            // Create the order with proper error handling
-                            final newOrder = Order(
-                              tableId: currentTable.tableId,
-                              orderId: '${currentTable.tableId}_order_${DateTime.now().millisecondsSinceEpoch}',
-                              dishes: List<Dish>.from(currentOrderDishes), // Ensure proper list type
-                              price: currentOrderTotal,
-                              timeStamp: DateTime.now().toIso8601String(),
-                              status: 'preparing', // Fixed typo: 'prepairing' -> 'preparing'
-                              specialInstructions: currentSpecialInstructions,
-                            );
-                            
-                            
-                            // Add order to its own 'orders' collection
-                            await ref.read(addOrderProvider(newOrder).future);
-                            
-                            // Add the order to the table's 'orders' array in Firestore
-                            await ref.read(addOrderToTableProvider(
-                              (tableNumber: currentTable.tableNumber, order: newOrder)
-                            ).future);
+                ? null
+                : () async {
+                    final currentTable = tableAsync.value!;
 
-                            ref.read(currentOrderProvider.notifier).clearOrder();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Order placed successfully!')),
-                            );
-                            Navigator.of(context).pop();
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Failed to place order: $e')),
-                            );
-                          }
-                        },
+                    try {
+                      if (activeOrder != null) {
+                        // Update existing active order
+                        final updatedDishes = [...activeOrder.dishes, ...currentOrderDishes];
+                        final updatedTotal = updatedDishes.fold(0.0, (sum, dish) => sum + dish.price);
+                        final updatedOrder = activeOrder.copyWith(
+                          dishes: updatedDishes,
+                          price: updatedTotal,
+                          specialInstructions: currentSpecialInstructions ?? activeOrder.specialInstructions,  // Or merge/append as needed
+                          timeStamp: DateTime.now().toIso8601String(),  // Optional: Update timestamp
+                        );
+
+                        // Update in 'orders' collection
+                        await ref.read(updateOrderProvider(updatedOrder).future);
+
+                        // Update in table's 'orders' array
+                        await ref.read(updateOrderInTableProvider(
+                          (tableNumber: currentTable.tableNumber, order: updatedOrder)
+                        ).future);
+                      } else {
+                        // Create new order (your existing logic)
+                        final newOrder = Order(
+                          tableId: currentTable.tableId,
+                          orderId: '${currentTable.tableId}_order_${DateTime.now().millisecondsSinceEpoch}',
+                          dishes: List.from(currentOrderDishes),
+                          price: currentOrderTotal,
+                          timeStamp: DateTime.now().toIso8601String(),
+                          status: 'preparing',
+                          specialInstructions: currentSpecialInstructions,
+                        );
+
+                        await ref.read(addOrderProvider(newOrder).future);
+                        await ref.read(addOrderToTableProvider(
+                          (tableNumber: currentTable.tableNumber, order: newOrder)
+                        ).future);
+                      }
+
+                      ref.read(currentOrderProvider.notifier).clearOrder();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Order placed/updated successfully!')),
+                      );
+                      Navigator.of(context).pop();
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to place/update order: $e')),
+                      );
+                    }
+                  },
                   icon: const Icon(Icons.send),
                   label: const Text('Place Order'),
                   style: ElevatedButton.styleFrom(

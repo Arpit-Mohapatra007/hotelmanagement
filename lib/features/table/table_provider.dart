@@ -25,6 +25,13 @@ final getTableByNumberProvider = FutureProvider.autoDispose.family<model.Table?,
   return repository.getTableByNumber(tableNumber);
 });
 
+final updateOrderInTableProvider = FutureProvider.autoDispose
+    .family<void, ({String tableNumber, Order order})>((ref, args) {
+  final repository = ref.watch(tableRepositoryProvider);
+  return repository.updateOrderInTable(args.tableNumber, args.order);
+});
+
+
 final addOrderToTableProvider = FutureProvider.autoDispose.family<void, ({String tableNumber, Order order})>((ref, args) {
   final repository = ref.watch(tableRepositoryProvider);
   // No more manual casting from Map, directly use the typed arguments

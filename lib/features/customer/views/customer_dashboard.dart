@@ -24,15 +24,29 @@ class CustomerDashboard extends HookConsumerWidget {
       appBar: AppBar(
         title: Text('Table $tableNumber'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            iconSize: 30.0,
-            onPressed: () {
-                    context.goNamed(
-                      AppRouteNames.customerCart,
-                      pathParameters: {'tableNumber': tableNumber},
-                    );
-                  },
+          Row(
+            children: [
+              IconButton(
+                onPressed: (){
+                  context.goNamed(
+                    AppRouteNames.orderStatus,
+                    pathParameters: {'tableNumber': tableNumber},
+                  );
+                }, 
+                icon: const Icon(Icons.fastfood),
+                iconSize: 30.0,
+                ),
+              IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                iconSize: 30.0,
+                onPressed: () {
+                        context.goNamed(
+                          AppRouteNames.customerCart,
+                          pathParameters: {'tableNumber': tableNumber},
+                        );
+                      },
+              ),
+            ],
           ),
         ],
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hotelmanagement/core/models/dish.dart';
+import 'package:hotelmanagement/core/models/order.dart';
 
 /// Represents the state of the current order (cart) for a customer.
 class CurrentOrderState {
@@ -61,7 +62,13 @@ class CurrentOrderNotifier extends Notifier<CurrentOrderState> {
     state = state.copyWith(specialInstructions: instructions);
   }
 
-  // You can add more methods here, e.g., to increase/decrease quantity, get a map of dish to quantity etc.
+  void loadOrder(Order order) {
+    state = state.copyWith(
+      dishes: order.dishes,
+      specialInstructions: order.specialInstructions,
+    );
+  }
+  
 }
 
 final currentOrderProvider = NotifierProvider<CurrentOrderNotifier, CurrentOrderState>(() {

@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
+
 import 'package:hotelmanagement/core/models/table.dart';
+
 import 'package:hotelmanagement/core/models/order.dart';
 
 class TableRepository {
-  //add table
-  Future<void> addTable(Table table) async {
+  // Add table
+  Future addTable(Table table) async {
     // Use the tableNumber as the document ID for consistent access
     await FirebaseFirestore.instance
         .collection('tables')
@@ -12,15 +14,15 @@ class TableRepository {
         .set(table.toJson());
   }
 
-  //delete table
-  Future<void> deleteTable(String tableNumber) async {
+  // Delete table
+  Future deleteTable(String tableNumber) async {
     await FirebaseFirestore.instance
         .collection('tables')
         .doc(tableNumber)
         .delete();
   }
 
-  //get all table
+  // Get all tables
   Stream<List<Table>> getAllTables() {
     return FirebaseFirestore.instance
         .collection('tables')
@@ -30,7 +32,7 @@ class TableRepository {
     });
   }
 
-  //get table by number
+  // Get table by number
   Future<Table?> getTableByNumber(String tableNumber) async {
     final doc = await FirebaseFirestore.instance
         .collection('tables')
@@ -42,27 +44,21 @@ class TableRepository {
     return null;
   }
 
-  //add a order to a table
-  Future<void> addOrderToTable(String tableNumber, Order order) async {
-    // Manually create the map to ensure correct serialization, especially for arrayUnion.
-    final orderData = {
-      'id': order.orderId,
-      'dishes': order.dishes.map((d) => d.toJson()).toList(),
-      'tableId': order.tableId,
-      'timestamp': order.timeStamp, // Convert DateTime to Firestore Timestamp
-      'status': order.status,
-      'specialInstructions': order.specialInstructions,
-    };
-    
+  // Add a order to a table
+  Future addOrderToTable(String tableNumber, Order order) async {
+    // Serialize dishes before saving
+    final serializedOrder = order.toJson();
+    serializedOrder['dishes'] = order.dishes.map((d) => d.toJson()).toList();
+
     await FirebaseFirestore.instance
         .collection('tables')
         .doc(tableNumber)
         .update({
-      'orders': FieldValue.arrayUnion([orderData])
+      'orders': FieldValue.arrayUnion([serializedOrder])
     });
   }
 
-  //get all orders for a table
+  // Get all orders for a table
   Stream<List<Order>> getOrdersForTable(String tableNumber) {
     return FirebaseFirestore.instance
         .collection('tables')
@@ -77,5 +73,43 @@ class TableRepository {
       }
       return [];
     });
+  }
+
+  Future updateOrderInTable(String tableNumber, Order updatedOrder) async {
+    final tableRef =
+        FirebaseFirestore.instance.collection('tables').doc(tableNumber);
+    try {
+      // Use a transaction to safely read and write
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final snapshot = await transaction.get(tableRef);
+        if (!snapshot.exists) {
+          throw Exception("Table does not exist!");
+        }
+
+        // Get the current list of orders
+        final List<dynamic> ordersList = snapshot.data()?['orders'] ?? [];
+
+        // Find the index of the order we need to update
+        final orderIndex = ordersList
+            .indexWhere((o) => o['orderId'] == updatedOrder.orderId);
+
+        // If the order is found, replace it with the updated version
+        if (orderIndex != -1) {
+          final mutableOrders = List.from(ordersList);
+
+          // Serialize dishes before updating
+          final serializedUpdatedOrder = updatedOrder.toJson();
+          serializedUpdatedOrder['dishes'] = updatedOrder.dishes.map((d) => d.toJson()).toList();
+
+          mutableOrders[orderIndex] = serializedUpdatedOrder; // Replace the old order
+
+          // Update the document with the new list
+          transaction.update(tableRef, {'orders': mutableOrders});
+        }
+      });
+    } catch (e) {
+      print("Error updating order in table: $e");
+      rethrow;
+    }
   }
 }
