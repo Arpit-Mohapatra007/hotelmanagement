@@ -39,7 +39,7 @@ class OrderStatus extends ConsumerWidget {
                     onPressed: () {
                       // Navigate to the cart to create a new order
                       context.goNamed(
-                        AppRouteNames.customerCart,
+                        AppRouteNames.customerDashboard,
                         pathParameters: {'tableNumber': tableNumber},
                       );
                     },
@@ -57,80 +57,108 @@ class OrderStatus extends ConsumerWidget {
 
           return Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Card(
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Use the null-coalescing operator to handle potential nulls
-                        Text('Order ID: ${activeOrder.orderId}',
-                            style: const TextStyle(fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 8),
-                        Text('Status: ${activeOrder.status}',
-                            style: const TextStyle(
-                                color: Colors.blueAccent,
-                                fontWeight: FontWeight.bold)),
-                      ],
+            child: Consumer(
+
+              builder: (context, ref, child) => Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Card(
+                    elevation: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Use the null-coalescing operator to handle potential nulls
+                          Text('Order ID: ${activeOrder.orderId}',
+                              style: const TextStyle(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          Consumer(builder: (context, ref, child) {
+                            final statusAsyncValue = ref.watch(orderStatusProvider(activeOrder.orderId));
+                            return statusAsyncValue.when(
+                              data: (status) => Text('Status: $status',
+                                  style: const TextStyle(
+                                      color: Colors.blueAccent,
+                                      fontWeight: FontWeight.bold)
+                                      ),
+                              loading: () => const Text('Status: Loading...', style: TextStyle(color: Colors.grey)),
+                              error: (e, st) => Text('Status: Error ($e)', style: const TextStyle(color: Colors.red)),
+                            );
+                          }),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Text('Ordered Items',
-                    style: Theme.of(context).textTheme.titleLarge),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: dishQuantities.length,
-                    itemBuilder: (context, index) {
-                      final dishName = dishQuantities.keys.elementAt(index);
-                      final quantity = dishQuantities.values.elementAt(index);
-                      return ListTile(
-                        title: Text(dishName),
-                        subtitle: Text('Quantity: $quantity'),
+                  const SizedBox(height: 16),
+                  Text('Ordered Items',
+                      style: Theme.of(context).textTheme.titleLarge),
+                  Consumer(builder: (context, ref, child) {
+                    final statusAsyncValue = ref.watch(orderStatusProvider(activeOrder.orderId));
+                    return statusAsyncValue.when(
+                      data: (status) => Expanded(
+                        child: ListView.builder(
+                          itemCount: dishQuantities.length,
+                          itemBuilder: (context, index) {
+                            final dishName = dishQuantities.keys.elementAt(index);
+                            final quantity = dishQuantities.values.elementAt(index);
+                            return ListTile(
+                              leading: (status == 'pending' || status == 'preparing')
+                                  ? const Icon(Icons.warning_amber_outlined,
+                                      color: Color.fromARGB(255, 81, 255, 0))
+                                  : (status == 'delivered')
+                                      ? const Icon(Icons.check_circle,
+                                          color: Colors.green)
+                                      : (status == 'cancelled')
+                                          ? const Icon(Icons.cancel,
+                                              color: Colors.red)
+                                          : null, // No leading icon for other statuses
+                              title: Text(dishName),
+                              subtitle: Text('Quantity: $quantity'),
+
+                            );
+                          },
+                        ),
+                      ),
+                      loading: () => const Expanded(child: Center(child: CircularProgressIndicator())),
+                      error: (e, st) => Expanded(child: Center(child: Text('Error loading status: $e'))),
+                    );
+                  }),
+                  const Divider(),
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.add_shopping_cart),
+                    label: const Text('Add More Items'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                    ),
+                    onPressed: () {
+                      context.goNamed(
+                        AppRouteNames.customerDashboard,
+                        pathParameters: {'tableNumber': tableNumber},
                       );
                     },
                   ),
-                ),
-                const Divider(),
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.add_shopping_cart),
-                  label: const Text('Add More Items'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
+                  const SizedBox(height: 8),
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.payment),
+                    label: const Text('Ask for Bill'),
+                    onPressed: () {
+                      context.goNamed(
+                        AppRouteNames.bill,
+                        pathParameters: {'tableNumber': tableNumber},
+                      );
+                    },
                   ),
-                  onPressed: () {
-                    context.goNamed(
-                      AppRouteNames.customerDashboard,
-                      pathParameters: {'tableNumber': tableNumber},
-                    );
-                  },
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.payment),
-                  label: const Text('Ask for Bill'),
-                  onPressed: () {
-                    // This will be implemented later
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Billing functionality coming soon!')),
-                    );
-                  },
-                ),
-                const SizedBox(height: 8),
-                TextButton.icon(
-                  icon: const Icon(Icons.cancel_outlined),
-                  label: const Text('Cancel Full Order'),
-                  style: TextButton.styleFrom(foregroundColor: Colors.red),
-                  // Cancel order confirmation dialog
-                  onPressed: () => _showCancelConfirmationDialog(
-                          context, ref, activeOrder),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  TextButton.icon(
+                    icon: const Icon(Icons.cancel_outlined),
+                    label: const Text('Cancel Full Order'),
+                    style: TextButton.styleFrom(foregroundColor: Colors.red),
+                    // Cancel order confirmation dialog
+                    onPressed: () => _showCancelConfirmationDialog(
+                        context, ref, activeOrder, tableNumber),
+                  ),
+                ],
+              ),
             ),
           );
         },
@@ -142,8 +170,7 @@ class OrderStatus extends ConsumerWidget {
 }
 
 Future<void> _showCancelConfirmationDialog(
-    BuildContext context, WidgetRef ref, Order order) async {
-  // Ensure orderId is not null before showing the dialog
+    BuildContext context, WidgetRef ref, Order order, String tableNumber) async {
   return showDialog<void>(
     context: context,
     barrierDismissible: false, // User must tap button!
@@ -170,13 +197,24 @@ Future<void> _showCancelConfirmationDialog(
             onPressed: () async {
               Navigator.of(context).pop(); // Dismiss dialog
               try {
-                await ref.read(cancelOrderProvider(order.orderId).future);
+                // Create an updated order with 'cancelled' status
+                final updatedOrder = order.copyWith(status: 'cancelled');
+
+                // Update in 'orders' collection (full update for consistency)
+                await ref.read(updateOrderProvider(updatedOrder).future);
+
+                // Update in 'tables' document's orders array
+                await ref.read(updateOrderInTableProvider(
+                  (tableNumber: tableNumber, order: updatedOrder),
+                ).future);
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Order has been cancelled.')),
                 );
-                // Invalidate the provider to refresh the table data
-                 ref.invalidate(getTableByNumberProvider(order.tableId));
-                            } catch (e) {
+
+                // Invalidate the provider to refresh the UI with the updated table data
+                ref.invalidate(getTableByNumberProvider(tableNumber));
+              } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Failed to cancel order: $e')),
                 );

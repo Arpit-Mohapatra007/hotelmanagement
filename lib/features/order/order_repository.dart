@@ -1,9 +1,6 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
-
 import 'package:hotelmanagement/core/models/dish.dart';
-
 import 'package:hotelmanagement/core/models/order.dart';
 
 class OrderRepository {
@@ -96,5 +93,14 @@ class OrderRepository {
         .update({
       'status': status,
     });
+  }
+
+  //Stream of order status
+  Stream<String> orderStatus(String orderId) {
+    return FirebaseFirestore.instance
+        .collection('orders')
+        .doc(orderId)
+        .snapshots()
+        .map((snapshot) => snapshot.data()?['status'] as String);
   }
 }

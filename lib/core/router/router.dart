@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hotelmanagement/features/customer/views/bill.dart';
 import 'package:hotelmanagement/features/customer/views/customer_dashboard.dart';
 import 'package:hotelmanagement/features/customer/views/customer_cart.dart';
 import 'package:hotelmanagement/features/customer/views/order_status.dart';
@@ -10,6 +11,7 @@ class AppRouteNames {
   static const String customerDashboard = 'customerDashboard';
   static const String customerCart = 'customerCart';
   static const String orderStatus = 'orderStatus'; 
+  static const String bill = 'bill';
 }
 
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -40,7 +42,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               final tableNumber = state.pathParameters['tableNumber'];
               return OrderStatus(tableNumber: tableNumber!);
             },
-          )
+          ),
+          GoRoute(path: 'bill',
+            name: AppRouteNames.bill,
+            builder: (context, state){
+              final tableNumber = state.pathParameters['tableNumber'];
+              return BillView(tableNumber: tableNumber!);
+            }
+            )
         ],
       ),
     ],

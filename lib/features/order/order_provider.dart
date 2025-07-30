@@ -15,12 +15,12 @@ final totalOrderPriceProvider = FutureProvider.autoDispose.family<double, String
   return repository.getTotalPrice(orderId);
 });
 
-final orderStatusProvider = FutureProvider.autoDispose.family<void, Map<String, String>>((ref, args) {
-  final repository = ref.watch(orderRepositoryProvider);
-  final orderId = args['orderId']!;
-  final status = args['status']!;
-  return repository.updateOrderStatus(orderId, status);
-});
+// final orderStatusProvider = FutureProvider.autoDispose.family<void, Map<String, String>>((ref, args) {
+//   final repository = ref.watch(orderRepositoryProvider);
+//   final orderId = args['orderId']!;
+//   final status = args['status']!;
+//   return repository.updateOrderStatus(orderId, status);
+// });
 
 final addOrderProvider = FutureProvider.autoDispose.family<void, Order>((ref, order) {
   final repository = ref.watch(orderRepositoryProvider);
@@ -47,7 +47,12 @@ final writeSpecialInstructionProvider = FutureProvider.autoDispose.family<void, 
   return repository.writeSpecialInstruction(orderId, instruction);
 });
 
-final cancelOrderProvider = FutureProvider.autoDispose.family<void, String>((ref, orderId) {
+final cancelOrderProvider = FutureProvider.family<void, String>((ref, orderId) {
   final repository = ref.watch(orderRepositoryProvider);
   return repository.cancelOrder(orderId);
+});
+
+final orderStatusProvider = StreamProvider.family<String, String>((ref, orderId){
+  final repository = ref.watch(orderRepositoryProvider);
+  return repository.orderStatus(orderId);
 });
