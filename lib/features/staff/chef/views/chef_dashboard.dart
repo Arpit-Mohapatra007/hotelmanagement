@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hotelmanagement/core/router/router.dart';
 
 class ChefDashboard extends StatelessWidget {
   const ChefDashboard({super.key});
@@ -7,7 +9,14 @@ class ChefDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('NAME'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          color: Colors.white,
+          onPressed: () {
+            context.goNamed(AppRouteNames.adminDashboard);
+          },
+        ),
+        title: const Text('Chef Dashboard'),
       ),
       body: Center(
         child: Column(
