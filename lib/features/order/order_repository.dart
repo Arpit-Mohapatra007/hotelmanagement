@@ -18,15 +18,12 @@ class OrderRepository {
   }
 
   // Get all orders
-  Stream<List<Order>> getAllOrders() {
+  Stream<List<Order>> getAllOrders()  {
     return FirebaseFirestore.instance
         .collection('orders')
         .snapshots()
-        .map((snapshot) {
-      return snapshot.docs.map((doc) => Order.fromJson(doc.data())).toList();
-    });
+        .map((snapshot) => snapshot.docs.map((doc) => Order.fromJson(doc.data())).toList());
   }
-
   // Get total price of a order
   Future<double> getTotalPrice(String orderId) async {
     final doc =
@@ -102,5 +99,23 @@ class OrderRepository {
         .doc(orderId)
         .snapshots()
         .map((snapshot) => snapshot.data()?['status'] as String);
+  }
+
+  //get order by ID
+  Future<Order?> getOrderById(String orderId) async {
+    return FirebaseFirestore.instance
+        .collection('orders')
+        .doc(orderId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        return Order.fromJson(doc.data()!);
+      }
+      return null;
+    });
+  }
+
+  Future<void> deleteOrder(String orderId) async {
+    await FirebaseFirestore.instance.collection('orders').doc(orderId).delete();
   }
 }

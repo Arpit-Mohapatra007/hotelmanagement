@@ -16,6 +16,7 @@ _Table _$TableFromJson(Map<String, dynamic> json) => _Table(
   currentBill: (json['currentBill'] as num).toDouble(),
   capacity: (json['capacity'] as num).toInt(),
   sessionInfo: json['sessionInfo'] as String,
+  totalTip: (json['totalTip'] as num?)?.toDouble() ?? 0.0,
 );
 
 Map<String, dynamic> _$TableToJson(_Table instance) => <String, dynamic>{
@@ -26,4 +27,5 @@ Map<String, dynamic> _$TableToJson(_Table instance) => <String, dynamic>{
   'currentBill': instance.currentBill,
   'capacity': instance.capacity,
   'sessionInfo': instance.sessionInfo,
+  'totalTip': instance.totalTip,
 };

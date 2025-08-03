@@ -48,3 +48,18 @@ final checkTableExistsProvider = FutureProvider.autoDispose.family<bool, String>
   final repository = ref.watch(tableRepositoryProvider);
   return repository.checkTableExists(tableNumber);
 });
+
+final getTableByIdProvider = FutureProvider.autoDispose.family<model.Table?, String>((ref, tableId) {
+  final respository = ref.watch(tableRepositoryProvider);
+  return respository.getTableById(tableId); 
+});
+
+final addTipToTableProvider = FutureProvider.autoDispose.family<void, ({String tableNumber, double tipAmount})>((ref, args) {
+  final repository = ref.watch(tableRepositoryProvider);
+  return repository.addTipToTable(args.tableNumber, args.tipAmount);
+});
+
+final getTotalTipsStreamProvider = StreamProvider.autoDispose<double>((ref) {
+  final repository = ref.watch(tableRepositoryProvider);
+  return repository.getTotalTipsStream();
+});

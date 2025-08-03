@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Table {
 
- String get tableId; String get tableNumber; String get status; List<Order> get orders; double get currentBill; int get capacity; String get sessionInfo;
+ String get tableId; String get tableNumber; String get status; List<Order> get orders; double get currentBill; int get capacity; String get sessionInfo; double get totalTip;
 /// Create a copy of Table
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $TableCopyWith<Table> get copyWith => _$TableCopyWithImpl<Table>(this as Table, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Table&&(identical(other.tableId, tableId) || other.tableId == tableId)&&(identical(other.tableNumber, tableNumber) || other.tableNumber == tableNumber)&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.orders, orders)&&(identical(other.currentBill, currentBill) || other.currentBill == currentBill)&&(identical(other.capacity, capacity) || other.capacity == capacity)&&(identical(other.sessionInfo, sessionInfo) || other.sessionInfo == sessionInfo));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Table&&(identical(other.tableId, tableId) || other.tableId == tableId)&&(identical(other.tableNumber, tableNumber) || other.tableNumber == tableNumber)&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.orders, orders)&&(identical(other.currentBill, currentBill) || other.currentBill == currentBill)&&(identical(other.capacity, capacity) || other.capacity == capacity)&&(identical(other.sessionInfo, sessionInfo) || other.sessionInfo == sessionInfo)&&(identical(other.totalTip, totalTip) || other.totalTip == totalTip));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,tableId,tableNumber,status,const DeepCollectionEquality().hash(orders),currentBill,capacity,sessionInfo);
+int get hashCode => Object.hash(runtimeType,tableId,tableNumber,status,const DeepCollectionEquality().hash(orders),currentBill,capacity,sessionInfo,totalTip);
 
 @override
 String toString() {
-  return 'Table(tableId: $tableId, tableNumber: $tableNumber, status: $status, orders: $orders, currentBill: $currentBill, capacity: $capacity, sessionInfo: $sessionInfo)';
+  return 'Table(tableId: $tableId, tableNumber: $tableNumber, status: $status, orders: $orders, currentBill: $currentBill, capacity: $capacity, sessionInfo: $sessionInfo, totalTip: $totalTip)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $TableCopyWith<$Res>  {
   factory $TableCopyWith(Table value, $Res Function(Table) _then) = _$TableCopyWithImpl;
 @useResult
 $Res call({
- String tableId, String tableNumber, String status, List<Order> orders, double currentBill, int capacity, String sessionInfo
+ String tableId, String tableNumber, String status, List<Order> orders, double currentBill, int capacity, String sessionInfo, double totalTip
 });
 
 
@@ -65,7 +65,7 @@ class _$TableCopyWithImpl<$Res>
 
 /// Create a copy of Table
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? tableId = null,Object? tableNumber = null,Object? status = null,Object? orders = null,Object? currentBill = null,Object? capacity = null,Object? sessionInfo = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? tableId = null,Object? tableNumber = null,Object? status = null,Object? orders = null,Object? currentBill = null,Object? capacity = null,Object? sessionInfo = null,Object? totalTip = null,}) {
   return _then(_self.copyWith(
 tableId: null == tableId ? _self.tableId : tableId // ignore: cast_nullable_to_non_nullable
 as String,tableNumber: null == tableNumber ? _self.tableNumber : tableNumber // ignore: cast_nullable_to_non_nullable
@@ -74,7 +74,8 @@ as String,orders: null == orders ? _self.orders : orders // ignore: cast_nullabl
 as List<Order>,currentBill: null == currentBill ? _self.currentBill : currentBill // ignore: cast_nullable_to_non_nullable
 as double,capacity: null == capacity ? _self.capacity : capacity // ignore: cast_nullable_to_non_nullable
 as int,sessionInfo: null == sessionInfo ? _self.sessionInfo : sessionInfo // ignore: cast_nullable_to_non_nullable
-as String,
+as String,totalTip: null == totalTip ? _self.totalTip : totalTip // ignore: cast_nullable_to_non_nullable
+as double,
   ));
 }
 
@@ -159,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String tableId,  String tableNumber,  String status,  List<Order> orders,  double currentBill,  int capacity,  String sessionInfo)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String tableId,  String tableNumber,  String status,  List<Order> orders,  double currentBill,  int capacity,  String sessionInfo,  double totalTip)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Table() when $default != null:
-return $default(_that.tableId,_that.tableNumber,_that.status,_that.orders,_that.currentBill,_that.capacity,_that.sessionInfo);case _:
+return $default(_that.tableId,_that.tableNumber,_that.status,_that.orders,_that.currentBill,_that.capacity,_that.sessionInfo,_that.totalTip);case _:
   return orElse();
 
 }
@@ -180,10 +181,10 @@ return $default(_that.tableId,_that.tableNumber,_that.status,_that.orders,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String tableId,  String tableNumber,  String status,  List<Order> orders,  double currentBill,  int capacity,  String sessionInfo)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String tableId,  String tableNumber,  String status,  List<Order> orders,  double currentBill,  int capacity,  String sessionInfo,  double totalTip)  $default,) {final _that = this;
 switch (_that) {
 case _Table():
-return $default(_that.tableId,_that.tableNumber,_that.status,_that.orders,_that.currentBill,_that.capacity,_that.sessionInfo);case _:
+return $default(_that.tableId,_that.tableNumber,_that.status,_that.orders,_that.currentBill,_that.capacity,_that.sessionInfo,_that.totalTip);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +201,10 @@ return $default(_that.tableId,_that.tableNumber,_that.status,_that.orders,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String tableId,  String tableNumber,  String status,  List<Order> orders,  double currentBill,  int capacity,  String sessionInfo)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String tableId,  String tableNumber,  String status,  List<Order> orders,  double currentBill,  int capacity,  String sessionInfo,  double totalTip)?  $default,) {final _that = this;
 switch (_that) {
 case _Table() when $default != null:
-return $default(_that.tableId,_that.tableNumber,_that.status,_that.orders,_that.currentBill,_that.capacity,_that.sessionInfo);case _:
+return $default(_that.tableId,_that.tableNumber,_that.status,_that.orders,_that.currentBill,_that.capacity,_that.sessionInfo,_that.totalTip);case _:
   return null;
 
 }
@@ -215,7 +216,7 @@ return $default(_that.tableId,_that.tableNumber,_that.status,_that.orders,_that.
 @JsonSerializable()
 
 class _Table implements Table {
-  const _Table({required this.tableId, required this.tableNumber, required this.status, required final  List<Order> orders, required this.currentBill, required this.capacity, required this.sessionInfo}): _orders = orders;
+  const _Table({required this.tableId, required this.tableNumber, required this.status, required final  List<Order> orders, required this.currentBill, required this.capacity, required this.sessionInfo, this.totalTip = 0.0}): _orders = orders;
   factory _Table.fromJson(Map<String, dynamic> json) => _$TableFromJson(json);
 
 @override final  String tableId;
@@ -231,6 +232,7 @@ class _Table implements Table {
 @override final  double currentBill;
 @override final  int capacity;
 @override final  String sessionInfo;
+@override@JsonKey() final  double totalTip;
 
 /// Create a copy of Table
 /// with the given fields replaced by the non-null parameter values.
@@ -245,16 +247,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Table&&(identical(other.tableId, tableId) || other.tableId == tableId)&&(identical(other.tableNumber, tableNumber) || other.tableNumber == tableNumber)&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._orders, _orders)&&(identical(other.currentBill, currentBill) || other.currentBill == currentBill)&&(identical(other.capacity, capacity) || other.capacity == capacity)&&(identical(other.sessionInfo, sessionInfo) || other.sessionInfo == sessionInfo));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Table&&(identical(other.tableId, tableId) || other.tableId == tableId)&&(identical(other.tableNumber, tableNumber) || other.tableNumber == tableNumber)&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._orders, _orders)&&(identical(other.currentBill, currentBill) || other.currentBill == currentBill)&&(identical(other.capacity, capacity) || other.capacity == capacity)&&(identical(other.sessionInfo, sessionInfo) || other.sessionInfo == sessionInfo)&&(identical(other.totalTip, totalTip) || other.totalTip == totalTip));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,tableId,tableNumber,status,const DeepCollectionEquality().hash(_orders),currentBill,capacity,sessionInfo);
+int get hashCode => Object.hash(runtimeType,tableId,tableNumber,status,const DeepCollectionEquality().hash(_orders),currentBill,capacity,sessionInfo,totalTip);
 
 @override
 String toString() {
-  return 'Table(tableId: $tableId, tableNumber: $tableNumber, status: $status, orders: $orders, currentBill: $currentBill, capacity: $capacity, sessionInfo: $sessionInfo)';
+  return 'Table(tableId: $tableId, tableNumber: $tableNumber, status: $status, orders: $orders, currentBill: $currentBill, capacity: $capacity, sessionInfo: $sessionInfo, totalTip: $totalTip)';
 }
 
 
@@ -265,7 +267,7 @@ abstract mixin class _$TableCopyWith<$Res> implements $TableCopyWith<$Res> {
   factory _$TableCopyWith(_Table value, $Res Function(_Table) _then) = __$TableCopyWithImpl;
 @override @useResult
 $Res call({
- String tableId, String tableNumber, String status, List<Order> orders, double currentBill, int capacity, String sessionInfo
+ String tableId, String tableNumber, String status, List<Order> orders, double currentBill, int capacity, String sessionInfo, double totalTip
 });
 
 
@@ -282,7 +284,7 @@ class __$TableCopyWithImpl<$Res>
 
 /// Create a copy of Table
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? tableId = null,Object? tableNumber = null,Object? status = null,Object? orders = null,Object? currentBill = null,Object? capacity = null,Object? sessionInfo = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? tableId = null,Object? tableNumber = null,Object? status = null,Object? orders = null,Object? currentBill = null,Object? capacity = null,Object? sessionInfo = null,Object? totalTip = null,}) {
   return _then(_Table(
 tableId: null == tableId ? _self.tableId : tableId // ignore: cast_nullable_to_non_nullable
 as String,tableNumber: null == tableNumber ? _self.tableNumber : tableNumber // ignore: cast_nullable_to_non_nullable
@@ -291,7 +293,8 @@ as String,orders: null == orders ? _self._orders : orders // ignore: cast_nullab
 as List<Order>,currentBill: null == currentBill ? _self.currentBill : currentBill // ignore: cast_nullable_to_non_nullable
 as double,capacity: null == capacity ? _self.capacity : capacity // ignore: cast_nullable_to_non_nullable
 as int,sessionInfo: null == sessionInfo ? _self.sessionInfo : sessionInfo // ignore: cast_nullable_to_non_nullable
-as String,
+as String,totalTip: null == totalTip ? _self.totalTip : totalTip // ignore: cast_nullable_to_non_nullable
+as double,
   ));
 }
 

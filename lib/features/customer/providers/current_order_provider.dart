@@ -16,7 +16,7 @@ class CurrentOrderState {
 
   // Helper to calculate total amount based on dishes
   double _calculateTotal(List<Dish> currentDishes) {
-    return currentDishes.fold(0.0, (sum, dish) => sum + dish.price);
+    return currentDishes.fold(0.0, (total, dish) => total + dish.price);
   }
 
   // CopyWith for immutability

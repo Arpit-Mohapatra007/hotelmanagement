@@ -15,12 +15,7 @@ final totalOrderPriceProvider = FutureProvider.autoDispose.family<double, String
   return repository.getTotalPrice(orderId);
 });
 
-// final orderStatusProvider = FutureProvider.autoDispose.family<void, Map<String, String>>((ref, args) {
-//   final repository = ref.watch(orderRepositoryProvider);
-//   final orderId = args['orderId']!;
-//   final status = args['status']!;
-//   return repository.updateOrderStatus(orderId, status);
-// });
+
 
 final addOrderProvider = FutureProvider.autoDispose.family<void, Order>((ref, order) {
   final repository = ref.watch(orderRepositoryProvider);
@@ -55,4 +50,21 @@ final cancelOrderProvider = FutureProvider.family<void, String>((ref, orderId) {
 final orderStatusProvider = StreamProvider.family<String, String>((ref, orderId){
   final repository = ref.watch(orderRepositoryProvider);
   return repository.orderStatus(orderId);
+});
+
+final getOrderByIdProvider = FutureProvider.family<Order?, String>((ref, orderId) async {
+  final repository = ref.watch(orderRepositoryProvider);
+  return repository.getOrderById(orderId);
+});
+
+final updateOrderStatusProvider = FutureProvider.family<void, Map<String, dynamic>>((ref, args) {
+  final repository = ref.watch(orderRepositoryProvider);
+  final orderId = args['orderId'] as String;
+  final status = args['status'] as String;
+  return repository.updateOrderStatus(orderId, status);
+});
+
+final deleteOrderProvider = FutureProvider.family<void, String>((ref, orderId){
+  final repository = ref.watch(orderRepositoryProvider);
+  return repository.deleteOrder(orderId);
 });

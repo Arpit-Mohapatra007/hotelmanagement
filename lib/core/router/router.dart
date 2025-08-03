@@ -10,6 +10,7 @@ import 'package:hotelmanagement/features/staff/accounts/views/accountant_dashboa
 import 'package:hotelmanagement/features/staff/admin/views/admin_dashboard.dart';
 import 'package:hotelmanagement/features/staff/chef/views/chef_dashboard.dart';
 import 'package:hotelmanagement/features/staff/inventory/views/inventory_dashboard.dart';
+import 'package:hotelmanagement/features/staff/waiter/views/order_details.dart';
 import 'package:hotelmanagement/features/staff/waiter/views/waiter_dashboard.dart';
 import 'package:hotelmanagement/home.dart';
 
@@ -28,6 +29,7 @@ class AppRouteNames {
   static const String accountsDashboard = 'accountsDashboard';
   static const String chefDashboard = 'chefDashboard';
   static const String inventoryDashboard = 'inventoryDashboard';
+  static const String orderDetails = 'orderDetails';
 }
 
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -115,7 +117,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           return const AdminDashboard();
         },
-        )
+        ),
+        GoRoute(path: '/orderDetails/:orderId',
+        name: AppRouteNames.orderDetails,
+        builder: (context, state) {
+          final orderId = state.pathParameters['orderId'];
+          return OrderDetailsView(orderId: orderId!);
+        },
+        ),
     ],
   );
 });

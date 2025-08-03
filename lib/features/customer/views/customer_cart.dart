@@ -14,37 +14,26 @@ class CustomerCart extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch the current order dishes and total from the global cart provider
     final currentOrderState = ref.watch(currentOrderProvider);
     final currentOrderDishes = currentOrderState.dishes;
     final currentOrderTotal = currentOrderState.totalAmount;
     final currentSpecialInstructions = currentOrderState.specialInstructions;
 
-    // Watch the table data to get tableId for placing order
     final tableAsync = ref.watch(getTableByNumberProvider(tableNumber));
 
-    // Add this to find the active order (if any)
     Order? activeOrder;
     if (tableAsync.hasValue && tableAsync.value != null) {
       activeOrder = tableAsync.value!.orders.firstWhereOrNull(
         (o) => o.status == 'pending' || o.status == 'preparing',
       );
     }
-
-    // Create a map to store unique dishes and their quantities for display
     final Map<Dish, int> dishQuantities = {};
     for (var dish in currentOrderDishes) {
       dishQuantities[dish] = (dishQuantities[dish] ?? 0) + 1;
     }
-
-    // Convert map entries to a list for ListView.builder to iterate over unique items
     final uniqueDishesWithQuantities = dishQuantities.entries.toList();
     
-    // Use useTextEditingController for proper state management across rebuilds
     final instructionsController = useTextEditingController(text: currentSpecialInstructions);
-
-    // Keep the controller's text in sync with the provider's state,
-    // in case special instructions are updated from elsewhere or initially loaded.
     useEffect(() {
       if (instructionsController.text != (currentSpecialInstructions ?? '')) {
         instructionsController.text = currentSpecialInstructions ?? '';
@@ -96,9 +85,8 @@ class CustomerCart extends HookConsumerWidget {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // Display count of dish in order
                               Text(
-                                '$dishCount', // Show the count of this specific dish
+                                '$dishCount',
                                 style: const TextStyle(
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.bold,
@@ -106,8 +94,8 @@ class CustomerCart extends HookConsumerWidget {
                                 ),
                               ),
                               const SizedBox(width: 4.0),
-                              IconButton(
-                                icon: const Icon(Icons.add_circle), // Changed to add_circle for cart
+                              IconButton( // Changed to add_circle for cart
+                                icon: const Icon(Icons.add_circle),
                                 color: Colors.green,
                                 onPressed: () {
                                   ref.read(currentOrderProvider.notifier).addDish(dish);
@@ -119,7 +107,7 @@ class CustomerCart extends HookConsumerWidget {
                               IconButton(
                                 icon: const Icon(Icons.remove_circle),
                                 color: Colors.red,
-                                onPressed: dishCount > 0 // Only enable if dish is in cart
+                                onPressed: dishCount > 0
                                     ? () {
                                         ref.read(currentOrderProvider.notifier).removeDish(dish);
                                         ScaffoldMessenger.of(context).showSnackBar(
@@ -145,8 +133,7 @@ class CustomerCart extends HookConsumerWidget {
                   style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16.0),
-                TextField(
-                  // Use the instructionsController
+                TextField( // Use the instructionsController
                   controller: instructionsController,
                   decoration: const InputDecoration(
                     labelText: 'Special Instructions (optional)',
@@ -165,45 +152,54 @@ class CustomerCart extends HookConsumerWidget {
 
                     try {
                       if (activeOrder != null) {
-                        // Update existing active order
+                        // Update existing order
                         final updatedDishes = [...activeOrder.dishes, ...currentOrderDishes];
-                        final updatedTotal = updatedDishes.fold(0.0, (sum, dish) => sum + dish.price);
+                        final updatedTotal = updatedDishes.fold(0.0, (total, dish) => total + dish.price);
                         final updatedOrder = activeOrder.copyWith(
                           dishes: updatedDishes,
                           price: updatedTotal,
-                          specialInstructions: currentSpecialInstructions ?? activeOrder.specialInstructions,  // Or merge/append as needed
-                          timeStamp: DateTime.now().toIso8601String(),  // Optional: Update timestamp
+                          specialInstructions: currentSpecialInstructions ?? activeOrder.specialInstructions,
+                          timeStamp: DateTime.now().toIso8601String(),
                         );
 
-                        // Update in 'orders' collection
+                        // Update in both collections
                         await ref.read(updateOrderProvider(updatedOrder).future);
-
-                        // Update in table's 'orders' array
                         await ref.read(updateOrderInTableProvider(
                           (tableNumber: currentTable.tableNumber, order: updatedOrder)
                         ).future);
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Order updated successfully!')),
+                        );
                       } else {
-                        // Create new order (your existing logic)
+                        // Create new order
                         final newOrder = Order(
                           tableId: currentTable.tableId,
                           orderId: '${currentTable.tableId}_order_${DateTime.now().millisecondsSinceEpoch}',
                           dishes: List.from(currentOrderDishes),
                           price: currentOrderTotal,
                           timeStamp: DateTime.now().toIso8601String(),
-                          status: 'preparing',
+                          status: 'preparing', 
                           specialInstructions: currentSpecialInstructions,
                         );
 
+                        // Add to both collections - FIXED: Use correct providers
                         await ref.read(addOrderProvider(newOrder).future);
                         await ref.read(addOrderToTableProvider(
                           (tableNumber: currentTable.tableNumber, order: newOrder)
                         ).future);
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('New order placed successfully!')),
+                        );
                       }
 
+                      // Clear the cart
                       ref.read(currentOrderProvider.notifier).clearOrder();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Order placed/updated successfully!')),
-                      );
+                      
+                      // Invalidate providers to refresh UI
+                      ref.invalidate(getTableByNumberProvider(tableNumber));
+                      
                       Navigator.of(context).pop();
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -212,9 +208,9 @@ class CustomerCart extends HookConsumerWidget {
                     }
                   },
                   icon: const Icon(Icons.send),
-                  label: const Text('Place Order'),
+                  label: Text(activeOrder != null ? 'Update Order' : 'Place Order'),
                   style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50), // Make button full width
+                    minimumSize: const Size(double.infinity, 50),
                   ),
                 ),
               ],

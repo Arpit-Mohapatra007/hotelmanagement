@@ -44,6 +44,26 @@ class TableRepository {
     return null;
   }
 
+  //get table by id
+  Future<Table?> getTableById(String tableId) async {
+  try {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('tables')
+        .where('tableId', isEqualTo: tableId)
+        .limit(1) 
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      final doc = querySnapshot.docs.first;
+      return Table.fromJson(doc.data());
+    }
+    return null;
+  } catch (e) {
+    return null; 
+  }
+}
+
+
   // Add a order to a table
   Future addOrderToTable(String tableNumber, Order order) async {
     // Serialize dishes before saving
@@ -116,8 +136,37 @@ class TableRepository {
         }
       });
     } catch (e) {
-      print("Error updating order in table: $e");
       rethrow;
     }
+  }
+
+  // Add tip to table
+  Future<void> addTipToTable(String tableNumber, double tipAmount) async {
+    await FirebaseFirestore.instance
+        .collection('tables')
+        .doc(tableNumber)
+        .update({
+      'tips': FieldValue.arrayUnion([{
+        'amount': tipAmount,
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+      }]),
+      'totalTips': FieldValue.increment(tipAmount)
+    });
+  }
+
+  // Get total tips stream for all tables
+  Stream<double> getTotalTipsStream() {
+    return FirebaseFirestore.instance
+        .collection('tables')
+        .snapshots()
+        .map((snapshot) {
+      double totalTips = 0.0;
+      for (var doc in snapshot.docs) {
+        if (doc.exists && doc.data().containsKey('totalTips')) {
+          totalTips += (doc.data()['totalTips'] as num?)?.toDouble() ?? 0.0;
+        }
+      }
+      return totalTips;
+    });
   }
 }
