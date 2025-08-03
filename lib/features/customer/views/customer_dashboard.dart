@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hotelmanagement/features/dish/dish_provider.dart';
 import 'package:hotelmanagement/features/customer/providers/current_order_provider.dart';
 import 'package:go_router/go_router.dart'; 
-import 'package:hotelmanagement/core/router/router.dart';
+import 'package:hotelmanagement/core/router/route_names.dart';
 
 class CustomerDashboard extends HookConsumerWidget {
   final String tableNumber;
@@ -22,6 +22,12 @@ class CustomerDashboard extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () {
+            context.goNamed(AppRouteNames.tableLogin);
+          },
+        ),
         title: Text('Table $tableNumber'),
         actions: [
           Row(

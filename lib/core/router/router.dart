@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:hotelmanagement/features/authentication/views/login.dart';
 import 'package:hotelmanagement/features/authentication/views/table_login.dart';
 import 'package:hotelmanagement/features/customer/views/bill.dart';
@@ -13,24 +14,6 @@ import 'package:hotelmanagement/features/staff/inventory/views/inventory_dashboa
 import 'package:hotelmanagement/features/staff/waiter/views/order_details.dart';
 import 'package:hotelmanagement/features/staff/waiter/views/waiter_dashboard.dart';
 import 'package:hotelmanagement/home.dart';
-
-// Define route names for easy access
-class AppRouteNames {
-  // These should be the actual 'name' strings used in GoRoute
-  static const String customerDashboard = 'customerDashboard';
-  static const String customerCart = 'customerCart';
-  static const String orderStatus = 'orderStatus'; 
-  static const String bill = 'bill';
-  static const String login = 'login';
-  static const String tableLogin = 'tableLogin';
-  static const String home = 'home';
-  static const String adminDashboard = 'adminDashboard';
-  static const String waiterDashboard = 'waiterDashboard';
-  static const String accountsDashboard = 'accountsDashboard';
-  static const String chefDashboard = 'chefDashboard';
-  static const String inventoryDashboard = 'inventoryDashboard';
-  static const String orderDetails = 'orderDetails';
-}
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(

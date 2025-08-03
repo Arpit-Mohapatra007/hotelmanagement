@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:hotelmanagement/core/router/router.dart';
+import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:hotelmanagement/features/table/table_provider.dart';
 
 class TableLogin extends HookConsumerWidget {
@@ -22,7 +22,7 @@ class TableLogin extends HookConsumerWidget {
             content: Text(message),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => context.goNamed(AppRouteNames.home),
                 child: const Text('OK'),
               ),
             ],
@@ -35,6 +35,12 @@ class TableLogin extends HookConsumerWidget {
       appBar: AppBar(
         title: const Text('Welcome'),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () {
+            context.goNamed(AppRouteNames.home);
+          },
+        ),
       ),
       body: Center(
         child: SingleChildScrollView(

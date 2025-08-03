@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart'; 
 import 'package:hotelmanagement/core/models/order.dart';
 import 'package:hotelmanagement/core/models/dish.dart';
+import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:hotelmanagement/features/customer/providers/current_order_provider.dart';
 import 'package:hotelmanagement/features/order/order_provider.dart';
 import 'package:hotelmanagement/features/table/table_provider.dart';
@@ -44,6 +46,14 @@ class CustomerCart extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Cart'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () {
+            context.goNamed(AppRouteNames.customerDashboard,
+            pathParameters: {'tableNumber': tableNumber},
+            );
+          },
+        ),
       ),
       body: Column(
         children: [

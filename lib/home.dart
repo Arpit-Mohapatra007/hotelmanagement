@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hotelmanagement/core/router/router.dart';
+import 'package:hotelmanagement/core/router/route_names.dart';
 
 class HomePage extends StatelessWidget {
  const HomePage({super.key});

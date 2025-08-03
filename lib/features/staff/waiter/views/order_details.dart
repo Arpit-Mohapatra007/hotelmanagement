@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hotelmanagement/core/router/router.dart';
+import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:hotelmanagement/features/order/order_provider.dart';
 import 'package:collection/collection.dart';
 import 'package:hotelmanagement/features/table/table_provider.dart';

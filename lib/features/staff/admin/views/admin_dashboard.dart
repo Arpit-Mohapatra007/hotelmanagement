@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hotelmanagement/core/router/router.dart'; 
+import 'package:hotelmanagement/core/router/route_names.dart'; 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
 
@@ -12,6 +12,12 @@ class AdminDashboard extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('ADMIN PANEL'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () {
+            context.goNamed(AppRouteNames.login);
+          },
+        ),
       ),
       body: Center(
         child: Padding(

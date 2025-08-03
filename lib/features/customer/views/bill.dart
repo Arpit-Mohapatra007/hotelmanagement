@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:hotelmanagement/core/router/router.dart';
+import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:hotelmanagement/features/table/table_provider.dart';
 import 'package:hotelmanagement/core/models/dish.dart';
 
@@ -20,6 +20,14 @@ class BillView extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Bill for Table $tableNumber'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () {
+            context.goNamed(AppRouteNames.orderStatus,
+            pathParameters: {'tableNumber': tableNumber},
+            );
+          },
+        ),
       ),
       body: tableAsync.when(
         data: (table) {
