@@ -113,27 +113,30 @@ class OrderDetailsView extends ConsumerWidget {
                     ElevatedButton(
                       onPressed: () async {
                         try {
-                          // First update the order status in orders collection
                           await ref.read(updateOrderStatusProvider({'orderId': orderId, 'status': 'served'}).future);
                           
-                          // Create updated order object with new status
                           final updatedOrder = order.copyWith(
                             status: 'served',
                             timeStamp: DateTime.now().toIso8601String(),
                           );
                           
-                          // Update the order in tables collection with the correct status
                           await ref.read(updateOrderInTableProvider(
-                              (tableNumber: tableAsync.value!.tableNumber, order: updatedOrder),
-                            ).future);
+                            (tableNumber: tableAsync.value!.tableNumber, order: updatedOrder),
+                          ).future);
 
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Order $orderId marked as served!')),
+                            SnackBar(
+                              content: Text('Order $orderId marked as served!'),
+                              backgroundColor: Colors.green,
+                            ),
                           );
                           context.goNamed(AppRouteNames.waiterDashboard);
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Failed to update: $e')),
+                            SnackBar(
+                              content: Text('Failed to update order: $e'),
+                              backgroundColor: Colors.red,
+                            ),
                           );
                         }
                       },
@@ -149,4 +152,6 @@ class OrderDetailsView extends ConsumerWidget {
       ),
     );
   }
+
+
 }

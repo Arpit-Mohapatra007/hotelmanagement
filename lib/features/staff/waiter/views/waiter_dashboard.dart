@@ -214,13 +214,10 @@ class WaiterDashboard extends ConsumerWidget {
     List<String> availableStatuses = [];
     switch (order.status) {
       case 'preparing':
-        availableStatuses = ['ready', 'cancelled'];
+        availableStatuses = ['cancelled'];
         break;
       case 'ready':
         availableStatuses = ['served', 'cancelled'];
-        break;
-      case 'served':
-        availableStatuses = ['ready']; // Allow to mark back as ready if needed
         break;
       default:
         return null;
