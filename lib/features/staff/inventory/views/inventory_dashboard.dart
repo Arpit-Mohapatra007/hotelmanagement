@@ -157,19 +157,8 @@ class InventoryDashboard extends ConsumerWidget {
               children: [
                 IconButton(
                   onPressed: () {
-                    print('🔴 UI: Increment button pressed');
-                    print('   - Item ID: "${item.id}"');
-                    print('   - Item Name: "${item.name}"');
-                    print('   - Current Quantity: ${item.quantity}');
-                    print('   - About to call updateInventoryProvider with +1');
-                    
-                    try {
-                      final updateFunction = ref.read(updateInventoryProvider);
-                      updateFunction(item.id, 1);
-                      print('✅ UI: Provider call initiated successfully');
-                    } catch (e) {
-                      print('❌ UI ERROR: Failed to call provider: $e');
-                    }
+                    final updateFunction = ref.read(updateInventoryProvider);
+                    updateFunction(item.id, 1);
                   },
                   icon: const Icon(Icons.add, color: Colors.green),
                   tooltip: 'Increase quantity',
@@ -177,19 +166,8 @@ class InventoryDashboard extends ConsumerWidget {
                 IconButton(
                   onPressed: item.quantity > 0 
                       ? () {
-                          print('🔵 UI: Decrement button pressed');
-                          print('   - Item ID: "${item.id}"');
-                          print('   - Item Name: "${item.name}"');
-                          print('   - Current Quantity: ${item.quantity}');
-                          print('   - About to call updateInventoryProvider with -1');
-                          
-                          try {
-                            final updateFunction = ref.read(updateInventoryProvider);
-                            updateFunction(item.id, -1);
-                            print('✅ UI: Provider call initiated successfully');
-                          } catch (e) {
-                            print('❌ UI ERROR: Failed to call provider: $e');
-                          }
+                          final updateFunction = ref.read(updateInventoryProvider);
+                          updateFunction(item.id, -1);
                         }
                       : null,
                   icon: const Icon(Icons.remove, color: Colors.orange),

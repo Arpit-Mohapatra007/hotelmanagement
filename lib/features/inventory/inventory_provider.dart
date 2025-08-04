@@ -24,16 +24,9 @@ final updateInventoryProvider = Provider<Future<void> Function(String id, int qu
   final repository = ref.watch(inventoryRepositoryProvider);
   
   return (String id, int quantityChange) async {
-    print('🎯 DEBUG: updateInventory function called');
-    print('   - ID: "$id"');
-    print('   - Quantity Change: $quantityChange');
-    
     try {
       await repository.updateInventory(id, quantityChange);
-      print('✅ Provider: Repository call completed successfully');
     } catch (e) {
-      print('❌ ERROR in updateInventory: $e');
-      print('   - Error type: ${e.runtimeType}');
       rethrow;
     }
   };
