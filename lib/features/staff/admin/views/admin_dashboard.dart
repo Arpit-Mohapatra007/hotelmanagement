@@ -34,7 +34,7 @@ class AdminDashboard extends StatelessWidget {
                     label: 'Waiter Management',
                     color: Colors.blue,
                     width: cardWidth,
-                    routeName: AppRouteNames.waiterDashboard,  // Replace with your actual route name
+                    routeName: AppRouteNames.waiterDashboard,  
                   ),
                   _buildDashboardCard(
                     context,
@@ -42,11 +42,11 @@ class AdminDashboard extends StatelessWidget {
                     label: 'Accounts',
                     color: Colors.green,
                     width: cardWidth,
-                    routeName: AppRouteNames.accountsDashboard,  // Replace with your actual route name
+                    routeName: AppRouteNames.accountsDashboard,  
                   ),
                 ],
               ),
-              const SizedBox(height: 24),  // Space between rows
+              const SizedBox(height: 24),  
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -56,7 +56,7 @@ class AdminDashboard extends StatelessWidget {
                     label: 'Chef Dashboard',
                     color: Colors.orange,
                     width: cardWidth,
-                    routeName: AppRouteNames.chefDashboard,  // Replace with your actual route name
+                    routeName: AppRouteNames.chefDashboard,  
                   ),
                   _buildDashboardCard(
                     context,
@@ -64,10 +64,19 @@ class AdminDashboard extends StatelessWidget {
                     label: 'Inventory',
                     color: Colors.purple,
                     width: cardWidth,
-                    routeName: AppRouteNames.inventoryDashboard,  // Replace with your actual route name
+                    routeName: AppRouteNames.inventoryDashboard,  
                   ),
                 ],
               ),
+              const SizedBox(height: 24),
+              _buildDashboardCard(
+              context, 
+              icon: Icons.admin_panel_settings_rounded, 
+              label: 'Admin Panel', 
+              color: Colors.red, 
+              width: 2*cardWidth, 
+              routeName: AppRouteNames.adminPanel
+              )  
             ],
           ),
         ),
@@ -85,7 +94,7 @@ class AdminDashboard extends StatelessWidget {
   }) {
     return InkWell(
       onTap: () {
-        context.goNamed(routeName);  // Navigate to the specified route
+        context.goNamed(routeName);  
       },
       borderRadius: BorderRadius.circular(12),
       child: Card(
@@ -95,7 +104,7 @@ class AdminDashboard extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: SizedBox(
           width: width,
-          height: 150,  // Fixed height for uniformity
+          height: 150, 
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

@@ -9,9 +9,17 @@ import 'package:hotelmanagement/features/customer/views/customer_cart.dart';
 import 'package:hotelmanagement/features/customer/views/order_status.dart';
 import 'package:hotelmanagement/features/staff/accounts/views/accountant_dashboard.dart';
 import 'package:hotelmanagement/features/staff/admin/views/admin_dashboard.dart';
+import 'package:hotelmanagement/features/staff/admin/views/admin_panel.dart';
+import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_add_dish.dart';
+import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_add_table.dart';
+import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_bills_view.dart';
+import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_finance_report.dart';
+import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_orders_view.dart';
+import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_table_status.dart';
+import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_update_dish.dart';
+import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_update_table.dart';
 import 'package:hotelmanagement/features/staff/chef/views/chef_dashboard.dart';
 import 'package:hotelmanagement/features/staff/inventory/views/inventory_dashboard.dart';
-import 'package:hotelmanagement/features/staff/waiter/views/order_details.dart';
 import 'package:hotelmanagement/features/staff/waiter/views/waiter_dashboard.dart';
 import 'package:hotelmanagement/home.dart';
 
@@ -101,13 +109,60 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           return const AdminDashboard();
         },
         ),
-        GoRoute(path: '/orderDetails/:orderId',
-        name: AppRouteNames.orderDetails,
+        GoRoute(path: '/adminPanel',
+        name: AppRouteNames.adminPanel,
         builder: (context, state) {
-          final orderId = state.pathParameters['orderId'];
-          return OrderDetailsView(orderId: orderId!);
+          return const AdminPanel();
         },
         ),
+        GoRoute(path: '/adminAddDish',
+        name: AppRouteNames.adminAddDish,
+        builder: (context, state) {
+          return const AdminAddDish();
+        },
+        ),
+        GoRoute(path: '/adminAddTable',
+        name: AppRouteNames.adminAddTable,
+        builder: (context, state) {
+          return const AdminAddTable();
+        },
+        ),
+        GoRoute(path: '/adminUpdateDish',
+        name: AppRouteNames.adminUpdateDish,
+        builder: (context, state) {
+          return const AdminUpdateDish();
+        },
+        ),
+        GoRoute(path: '/adminUpdateTable',
+        name: AppRouteNames.adminUpdateTable,
+        builder: (context, state) {
+          return const AdminUpdateTable();
+        },
+        ),
+        GoRoute(path: '/adminOrdersView',
+        name: AppRouteNames.adminOrdersView,
+        builder: (context, state) {
+          return const AdminOrdersView();
+        },
+        ),
+        GoRoute(path: '/adminBillsView',
+        name: AppRouteNames.adminBillsView,
+        builder: (context, state) {
+          return const AdminBillsView();
+        },
+        ),
+        GoRoute(path: '/adminTableStatus',
+        name: AppRouteNames.adminTableStatus,
+        builder: (context, state) {
+          return const AdminTableStatus();
+        }
+        ),
+        GoRoute(path: '/adminFinanceReport',
+        name: AppRouteNames.adminFinanceReport,
+        builder: (context, state) {
+          return const AdminFinanceReport();
+        },
+        )
     ],
   );
 });
