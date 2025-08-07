@@ -75,7 +75,7 @@ class WaiterDashboard extends ConsumerWidget {
                   
                   // Filter out unknown and paid orders
                   final filteredOrders = orders.where((order) => 
-                    order.status != 'unknown' && order.status != 'paid'
+                    order.status != 'unknown' && order.status != 'paid' && order.status != 'cancelled' && order.status != 'served'
                   ).toList();
                   
                   // Sort orders by priority: ready, preparing, served, cancelled
@@ -83,8 +83,6 @@ class WaiterDashboard extends ConsumerWidget {
                     const statusPriority = {
                       'ready': 0,
                       'preparing': 1,
-                      'served': 2,
-                      'cancelled': 3,
                     };
                     return (statusPriority[a.status] ?? 4).compareTo(statusPriority[b.status] ?? 4);
                   });
@@ -204,70 +202,89 @@ class WaiterDashboard extends ConsumerWidget {
     );
   }
 
-  Widget? _buildTrailingButton(BuildContext context, WidgetRef ref, order) {
-    // Don't show dropdown for cancelled orders
-    if (order.status == 'cancelled') {
+Widget? _buildTrailingButton(BuildContext context, WidgetRef ref, order) {
+  // ✅ Use getTableByIdProvider instead of getTableByNumberProvider
+  final tableAsync = ref.watch(getTableByIdProvider(order.tableId));
+  
+  // Define available status options based on current status
+  List<String> availableStatuses = [];
+  switch (order.status) {
+    case 'preparing':
+      availableStatuses = ['cancelled'];
+      break;
+    case 'ready':
+      availableStatuses = ['served', 'cancelled'];
+      break;
+    default:
       return null;
-    }
-
-    // Define available status options based on current status
-    List<String> availableStatuses = [];
-    switch (order.status) {
-      case 'preparing':
-        availableStatuses = ['cancelled'];
-        break;
-      case 'ready':
-        availableStatuses = ['served', 'cancelled'];
-        break;
-      default:
-        return null;
-    }
-
-    return DropdownButton<String>(
-      icon: const Icon(Icons.more_vert),
-      underline: Container(),
-      items: availableStatuses.map((String status) {
-        return DropdownMenuItem<String>(
-          value: status,
-          child: Text(
-            _getStatusDisplayName(status),
-            style: TextStyle(
-              color: _getStatusColor(status),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        );
-      }).toList(),
-      onChanged: (String? newStatus) async {
-        if (newStatus != null) {
-          try {
-            await ref.read(
-              updateOrderStatusProvider({
-                'orderId': order.orderId,
-                'status': newStatus
-              }).future
-            );
-            
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Order ${order.orderId} marked as ${_getStatusDisplayName(newStatus)}!'
-                ),
-                backgroundColor: _getStatusColor(newStatus),
-              ),
-            );
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Error: $e'),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-        }
-      },
-    );
   }
+
+  return DropdownButton<String>(
+    icon: const Icon(Icons.more_vert),
+    underline: Container(),
+    items: availableStatuses.map((String status) {
+      return DropdownMenuItem<String>(
+        value: status,
+        child: Text(
+          _getStatusDisplayName(status),
+          style: TextStyle(
+            color: _getStatusColor(status),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      );
+    }).toList(),
+    onChanged: (String? newStatus) async {
+      if (newStatus != null) {
+         if (newStatus == 'cancelled') {
+          final shouldCancel = await _showCancelConfirmationDialog(context, order.orderId);
+          if (!shouldCancel) return;
+        }
+
+        try {
+            if (!tableAsync.hasValue || tableAsync.value == null) {
+            throw Exception('Table information not available');
+          }
+
+          final table = tableAsync.value!;
+          final updatedOrder = order.copyWith(status: newStatus);
+
+          await ref.read(updateOrderProvider(updatedOrder).future);
+
+          await ref.read(updateOrderInTableProvider(
+            (tableNumber: table.tableNumber, order: updatedOrder),
+          ).future);
+
+          ref.invalidate(getTableByIdProvider(order.tableId));
+          
+          await ref.read(
+            updateOrderStatusProvider({
+              'orderId': order.orderId,
+              'status': newStatus
+            }).future
+          );
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Order ${order.orderId} marked as ${_getStatusDisplayName(newStatus)}!'
+              ),
+              backgroundColor: _getStatusColor(newStatus),
+            ),
+          );
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    },
+  );
+}
+
 
   String _getStatusDisplayName(String status) {
     switch (status) {
@@ -351,4 +368,28 @@ class WaiterDashboard extends ConsumerWidget {
       ),
     );
   }
+}
+
+Future<bool> _showCancelConfirmationDialog(BuildContext context, String orderId) async {
+  return await showDialog<bool>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Cancel Order'),
+        content: Text('Are you sure you want to cancel order $orderId?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Yes, Cancel'),
+          ),
+        ],
+      );
+    },
+  ) ?? false;
 }
