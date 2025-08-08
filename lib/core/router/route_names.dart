@@ -22,4 +22,5 @@ class AppRouteNames {
   static const String adminBillsView = 'adminBillsView';
   static const String adminTableStatus = 'adminTableStatus';
   static const String adminFinanceReport = 'adminFinanceReport';
+  static const String orderDetails = 'orderDetails';
 }

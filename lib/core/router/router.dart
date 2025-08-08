@@ -18,6 +18,7 @@ import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_ord
 import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_table_status.dart';
 import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_update_dish.dart';
 import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_update_table.dart';
+import 'package:hotelmanagement/features/staff/admin/views/admin_panel/order_details.dart';
 import 'package:hotelmanagement/features/staff/chef/views/chef_dashboard.dart';
 import 'package:hotelmanagement/features/staff/inventory/views/inventory_dashboard.dart';
 import 'package:hotelmanagement/features/staff/waiter/views/waiter_dashboard.dart';
@@ -162,6 +163,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           return const AdminFinanceReport();
         },
+        ),
+        GoRoute(path: '/orderDetails',
+        name: AppRouteNames.orderDetails,
+        builder: (context, state) {
+          return OrderDetails(orderId: state.extra as String);
+        }
         )
     ],
   );

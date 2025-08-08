@@ -34,7 +34,7 @@ class AdminBillsView extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           color: Colors.white,
           onPressed: () {
-            context.goNamed(AppRouteNames.adminDashboard);
+            context.goNamed(AppRouteNames.adminPanel);
           },
         ),
         title: const Text('Accounts Dashboard'),
