@@ -45,7 +45,8 @@ class DishRepository {
   }
   //add a dish
   Future<void> addDish(Dish dish) async {
-    await FirebaseFirestore.instance.collection('dishes').add(dish.toJson());
+    await FirebaseFirestore.instance.collection('dishes').doc(dish.id)
+        .set(dish.toJson());
   }
   //remove a dish
   Future<void> removeDish(String dishId) async {

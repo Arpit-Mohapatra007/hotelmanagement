@@ -34,7 +34,6 @@ final updateOrderInTableProvider = FutureProvider.autoDispose
 
 final addOrderToTableProvider = FutureProvider.autoDispose.family<void, ({String tableNumber, Order order})>((ref, args) {
   final repository = ref.watch(tableRepositoryProvider);
-  // No more manual casting from Map, directly use the typed arguments
   return repository.addOrderToTable(args.tableNumber, args.order);
 });
 

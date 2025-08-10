@@ -7,7 +7,6 @@ import 'package:hotelmanagement/core/models/order.dart';
 class TableRepository {
   // Add table
   Future addTable(Table table) async {
-    // Use the tableNumber as the document ID for consistent access
     await FirebaseFirestore.instance
         .collection('tables')
         .doc(table.tableNumber)
