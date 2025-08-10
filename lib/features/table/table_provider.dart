@@ -63,3 +63,8 @@ final getTotalTipsStreamProvider = StreamProvider.autoDispose<double>((ref) {
   final repository = ref.watch(tableRepositoryProvider);
   return repository.getTotalTipsStream();
 });
+
+final updateTableStatusProvider = FutureProvider.autoDispose.family<void, ({String tableNumber, String newStatus})>((ref, args) {
+  final repository = ref.watch(tableRepositoryProvider);
+  return repository.updateTableStatusProvider(args.tableNumber, args.newStatus);
+});

@@ -203,11 +203,9 @@ class WaiterDashboard extends ConsumerWidget {
   }
 
 Widget? _buildTrailingButton(BuildContext context, WidgetRef ref, order) {
-  // ✅ Use getTableByIdProvider instead of getTableByNumberProvider
-  final tableAsync = ref.watch(getTableByIdProvider(order.tableId));
+   final tableAsync = ref.watch(getTableByIdProvider(order.tableId));
   
-  // Define available status options based on current status
-  List<String> availableStatuses = [];
+   List<String> availableStatuses = [];
   switch (order.status) {
     case 'preparing':
       availableStatuses = ['cancelled'];

@@ -16,9 +16,9 @@ import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_bil
 import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_finance_report.dart';
 import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_orders_view.dart';
 import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_table_status.dart';
-import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_update_dish.dart';
-import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_update_table.dart';
+import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_update_dish_view.dart';
 import 'package:hotelmanagement/features/staff/admin/views/admin_panel/order_details.dart';
+import 'package:hotelmanagement/features/staff/admin/views/admin_panel/update_dish.dart';
 import 'package:hotelmanagement/features/staff/chef/views/chef_dashboard.dart';
 import 'package:hotelmanagement/features/staff/inventory/views/inventory_dashboard.dart';
 import 'package:hotelmanagement/features/staff/waiter/views/waiter_dashboard.dart';
@@ -131,15 +131,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         GoRoute(path: '/adminUpdateDish',
         name: AppRouteNames.adminUpdateDish,
         builder: (context, state) {
-          return const AdminUpdateDish();
+          return AdminUpdateDish(dishId: state.extra as String);
         },
         ),
-        GoRoute(path: '/adminUpdateTable',
-        name: AppRouteNames.adminUpdateTable,
-        builder: (context, state) {
-          return const AdminUpdateTable();
-        },
-        ),
+        
         GoRoute(path: '/adminOrdersView',
         name: AppRouteNames.adminOrdersView,
         builder: (context, state) {
@@ -169,7 +164,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           return OrderDetails(orderId: state.extra as String);
         }
-        )
+        ),
+        GoRoute(path: '/adminUpdateDishView',
+        name: AppRouteNames.adminUpdateDishView,
+        builder: (context, state) {
+          return const AdminUpdateDishView();
+        },
+        ),
+        
     ],
   );
 });

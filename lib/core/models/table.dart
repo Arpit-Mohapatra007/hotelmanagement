@@ -13,7 +13,6 @@ abstract class Table with _$Table {
     required double currentBill,
     required int capacity,
     required String sessionInfo,
-    @Default(0.0) double totalTip,
   }) = _Table;
 
   factory Table.fromJson(Map<String, dynamic> json) => _$TableFromJson(json);

@@ -169,4 +169,11 @@ class TableRepository {
       return totalTips;
     });
   }
+
+  Future<void>updateTableStatusProvider(String tableNumber, String newStatus) async {
+    await FirebaseFirestore.instance
+        .collection('tables')
+        .doc(tableNumber)
+        .update({'status': newStatus});
+  }
 }

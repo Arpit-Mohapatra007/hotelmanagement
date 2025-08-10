@@ -116,7 +116,8 @@ class BillView extends HookConsumerWidget {
                       // Save tip if provided
                       if (tipAmount > 0) {
                         await ref.read(addTipToTableProvider((tableNumber: tableNumber, tipAmount: tipAmount)).future);
-                      }
+                        }
+                      ref.read(updateTableStatusProvider((tableNumber: tableNumber, newStatus: 'available')));
                       
                       // TODO: Implement payment logic
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -130,9 +131,8 @@ class BillView extends HookConsumerWidget {
                       );
                       
                       context.goNamed(
-                        AppRouteNames.customerDashboard,
-                        pathParameters: {'tableNumber': tableNumber},
-                      );
+                        AppRouteNames.tableLogin,
+                       );
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Error processing payment: $e')),

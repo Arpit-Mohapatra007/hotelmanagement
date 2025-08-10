@@ -17,10 +17,10 @@ class AppRouteNames {
   static const String adminAddDish = 'adminAddDish';
   static const String adminAddTable = 'adminAddTable';
   static const String adminUpdateDish = 'adminUpdateDish';
-  static const String adminUpdateTable = 'adminUpdateTable';
   static const String adminOrdersView = 'adminOrdersView';
   static const String adminBillsView = 'adminBillsView';
   static const String adminTableStatus = 'adminTableStatus';
   static const String adminFinanceReport = 'adminFinanceReport';
   static const String orderDetails = 'orderDetails';
+  static const String adminUpdateDishView = 'adminUpdateDishView';
 }

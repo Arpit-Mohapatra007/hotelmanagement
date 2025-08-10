@@ -92,15 +92,8 @@ class AdminPanel extends StatelessWidget {
                       label: 'Update Dish', 
                       color: Colors.cyan, 
                       width: cardWidth, 
-                      routeName: AppRouteNames.adminUpdateDish),
-                    _buildDashboardCard(
-                      context, 
-                      icon: Icons.edit_outlined, 
-                      label: 'Update Table', 
-                      color: Colors.indigo, 
-                      width: cardWidth, 
-                      routeName: AppRouteNames.adminUpdateTable)
-                  ],
+                      routeName: AppRouteNames.adminUpdateDishView),
+                    ],
                 )
               ],),
             ),

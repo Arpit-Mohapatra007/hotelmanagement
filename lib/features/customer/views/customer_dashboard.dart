@@ -5,6 +5,7 @@ import 'package:hotelmanagement/features/dish/dish_provider.dart';
 import 'package:hotelmanagement/features/customer/providers/current_order_provider.dart';
 import 'package:go_router/go_router.dart'; 
 import 'package:hotelmanagement/core/router/route_names.dart';
+import 'package:hotelmanagement/features/table/table_provider.dart';
 
 class CustomerDashboard extends HookConsumerWidget {
   final String tableNumber;
@@ -12,6 +13,7 @@ class CustomerDashboard extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.read(updateTableStatusProvider((tableNumber: tableNumber, newStatus: 'occupied')));
     final searchController = useTextEditingController(); 
     final searchQuery = ref.watch(dishSearchQueryProvider);
     // Watch searchedDishesProvider directly based on the searchQuery
@@ -19,7 +21,6 @@ class CustomerDashboard extends HookConsumerWidget {
     // Watch the current order dishes and total for displaying in the UI
     final currentOrderDishes = ref.watch(currentOrderDishesProvider);
     final currentOrderTotal = ref.watch(currentOrderTotalProvider);
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
