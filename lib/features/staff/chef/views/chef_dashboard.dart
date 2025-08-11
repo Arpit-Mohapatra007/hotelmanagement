@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hotelmanagement/core/router/route_names.dart';
+import 'package:hotelmanagement/features/inventory/inventory_provider.dart';
 import 'package:hotelmanagement/features/order/order_provider.dart';
 import 'package:hotelmanagement/features/table/table_provider.dart';
 
@@ -190,9 +191,55 @@ class ChefDashboard extends ConsumerWidget {
             ),
           ],
         ),
-        subtitle: Text(
-          'Order ID: ${order.orderId}\n${order.dishes.length} items',
-          style: const TextStyle(fontSize: 12),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Order ID: ${order.orderId}\n${order.dishes.length} items',
+              style: const TextStyle(fontSize: 12),
+            ),
+            // Add ingredient availability check
+            Consumer(
+              builder: (context, ref, child) {
+                final ingredientCheck = ref.watch(checkOrderIngredientsProvider(order.orderId));
+                return ingredientCheck.when(
+                  data: (data) {
+                    if (data['allAvailable'] == false) {
+                      final unavailable = data['unavailableIngredients'] as List<String>;
+                      return Container(
+                        margin: const EdgeInsets.only(top: 4),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.red, width: 1),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.warning, color: Colors.red, size: 16),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Missing: ${unavailable.join(', ')}',
+                                style: TextStyle(
+                                  color: Colors.red[700],
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                  loading: () => const SizedBox.shrink(),
+                  error: (_, __) => const SizedBox.shrink(),
+                );
+              },
+            ),
+          ],
         ),
         trailing: _buildTrailingButton(context, ref, order, order.tableId),
         children: [
@@ -219,123 +266,158 @@ class ChefDashboard extends ConsumerWidget {
   }
 
   Widget? _buildTrailingButton(BuildContext context, WidgetRef ref, order, tableId) {
-  final tableAsync = ref.watch(getTableByIdProvider(tableId));
-  
-  // Only show buttons for 'preparing' status
-  if (order.status != 'preparing') {
-    return null;
+    final tableAsync = ref.watch(getTableByIdProvider(tableId));
+    
+    // Only show buttons for 'preparing' status
+    if (order.status != 'preparing') {
+      return null;
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Cancel Button
+        ElevatedButton(
+          onPressed: () async {
+            try {
+              // Create an updated order with 'cancelled' status
+              final updatedOrder = order.copyWith(status: 'cancelled');
+
+              // Update in 'orders' collection (full update for consistency)
+              await ref.read(updateOrderProvider(updatedOrder).future);
+
+              // Update in 'tables' document's orders array
+              await ref.read(updateOrderInTableProvider(
+                (tableNumber: tableAsync.value!.tableNumber, order: updatedOrder),
+              ).future);
+
+              // Invalidate the provider to refresh the UI with the updated table data
+              ref.invalidate(getTableByNumberProvider(tableAsync.value!.tableNumber));
+              
+              await ref.read(
+                updateOrderStatusProvider({
+                  'orderId': order.orderId,
+                  'status': 'cancelled'
+                }).future
+              );
+              
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Order ${order.orderId} has been cancelled!'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Error cancelling order: $e'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            minimumSize: const Size(60, 30),
+          ),
+          child: const Text(
+            'Cancel',
+            style: TextStyle(fontSize: 10),
+          ),
+        ),
+        const SizedBox(width: 4),
+        // Ready Button
+        ElevatedButton(
+          onPressed: () async {
+            // Show loading dialog
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => const Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+
+            try {
+              // First, check ingredient availability and attempt deduction
+              final deductionResult = await ref.read(deductInventoryForOrderProvider(order.orderId).future);
+              
+              // Close loading dialog
+              Navigator.of(context).pop();
+
+              if (deductionResult['success'] == true) {
+                // Ingredients successfully deducted, update order status
+                final updatedOrder = order.copyWith(status: 'ready');
+
+                await ref.read(updateOrderProvider(updatedOrder).future);
+                await ref.read(updateOrderInTableProvider(
+                  (tableNumber: tableAsync.value!.tableNumber, order: updatedOrder),
+                ).future);
+
+                ref.invalidate(getTableByNumberProvider(tableAsync.value!.tableNumber));
+                
+                await ref.read(
+                  updateOrderStatusProvider({
+                    'orderId': order.orderId,
+                    'status': 'ready'
+                  }).future
+                );
+
+                // Invalidate to refresh ingredient check
+                ref.invalidate(checkOrderIngredientsProvider(order.orderId));
+                
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Order ${order.orderId} marked as ready! Ingredients deducted.'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              } else {
+                // Ingredient deduction failed
+                final message = deductionResult['message'] as String;
+                
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Ingredients Not Available'),
+                    content: Text(message),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            } catch (e) {
+              // Close loading dialog if still open
+              Navigator.of(context).pop();
+              
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Error: $e'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            minimumSize: const Size(60, 30),
+          ),
+          child: const Text(
+            'Ready',
+            style: TextStyle(fontSize: 10),
+          ),
+        ),
+      ],
+    );
   }
-
-  return Row(
-    mainAxisSize: MainAxisSize.min, // Important: prevents overflow
-    children: [
-      // Cancel Button
-      ElevatedButton(
-        onPressed: () async {
-          try {
-            // Create an updated order with 'cancelled' status
-            final updatedOrder = order.copyWith(status: 'cancelled');
-
-            // Update in 'orders' collection (full update for consistency)
-            await ref.read(updateOrderProvider(updatedOrder).future);
-
-            // Update in 'tables' document's orders array
-            await ref.read(updateOrderInTableProvider(
-              (tableNumber: tableAsync.value!.tableNumber, order: updatedOrder),
-            ).future);
-
-            // Invalidate the provider to refresh the UI with the updated table data
-            ref.invalidate(getTableByNumberProvider(tableAsync.value!.tableNumber));
-            
-            await ref.read(
-              updateOrderStatusProvider({
-                'orderId': order.orderId,
-                'status': 'cancelled'
-              }).future
-            );
-            
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Order ${order.orderId} has been cancelled!'),
-                backgroundColor: Colors.red,
-              ),
-            );
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Error cancelling order: $e'),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          minimumSize: const Size(60, 30), // Compact size
-        ),
-        child: const Text(
-          'Cancel',
-          style: TextStyle(fontSize: 10),
-        ),
-      ),
-      const SizedBox(width: 4), // Small space between buttons
-      // Ready Button
-      ElevatedButton(
-        onPressed: () async {
-          try {
-            // Create an updated order with 'ready' status
-            final updatedOrder = order.copyWith(status: 'ready');
-
-            // Update in 'orders' collection (full update for consistency)
-            await ref.read(updateOrderProvider(updatedOrder).future);
-
-            // Update in 'tables' document's orders array
-            await ref.read(updateOrderInTableProvider(
-              (tableNumber: tableAsync.value!.tableNumber, order: updatedOrder),
-            ).future);
-
-            // Invalidate the provider to refresh the UI with the updated table data
-            ref.invalidate(getTableByNumberProvider(tableAsync.value!.tableNumber));
-            
-            await ref.read(
-              updateOrderStatusProvider({
-                'orderId': order.orderId,
-                'status': 'ready'
-              }).future
-            );
-            
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Order ${order.orderId} marked as ready!'),
-                backgroundColor: Colors.blue,
-              ),
-            );
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Error: $e'),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          minimumSize: const Size(60, 30), // Compact size
-        ),
-        child: const Text(
-          'Ready',
-          style: TextStyle(fontSize: 10),
-        ),
-      ),
-    ],
-  );
-}
-
 
   Widget _buildDishCard(dish) {
     return Card(
