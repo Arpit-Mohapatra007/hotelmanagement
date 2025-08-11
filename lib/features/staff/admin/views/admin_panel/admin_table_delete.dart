@@ -3,13 +3,14 @@ import 'package:go_router/go_router.dart';
 import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hotelmanagement/features/dish/dish_provider.dart';
+import 'package:hotelmanagement/features/table/table_provider.dart';
 
-class AdminUpdateDishView extends ConsumerWidget {
-  const AdminUpdateDishView({super.key});
+class AdminTableDelete extends ConsumerWidget {
+  const AdminTableDelete({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dishAsync = ref.watch(dishesProvider);
+    final tableAsync = ref.watch(tablesProvider);
     
     return Scaffold(
       appBar: AppBar(
@@ -17,7 +18,7 @@ class AdminUpdateDishView extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => context.goNamed(AppRouteNames.adminPanel),
         ),
-        title: const Text('Update Dish'),
+        title: const Text('Delete Table'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -25,7 +26,7 @@ class AdminUpdateDishView extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Select a dish to update:',
+              'Select a Table to delete:',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -33,9 +34,9 @@ class AdminUpdateDishView extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: dishAsync.when(
-                data: (dishes) {
-                  if (dishes.isEmpty) {
+              child: tableAsync.when(
+                data: (tables) {
+                  if (tables.isEmpty) {
                     return const Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -43,7 +44,7 @@ class AdminUpdateDishView extends ConsumerWidget {
                           Icon(Icons.restaurant_menu, size: 64, color: Colors.grey),
                           SizedBox(height: 16),
                           Text(
-                            'No dishes available',
+                            'No tables available',
                             style: TextStyle(fontSize: 16, color: Colors.grey),
                           ),
                         ],
@@ -52,9 +53,9 @@ class AdminUpdateDishView extends ConsumerWidget {
                   }
                   
                   return ListView.builder(
-                    itemCount: dishes.length,
+                    itemCount: tables.length,
                     itemBuilder: (context, index) {
-                      final dish = dishes[index];
+                      final table = tables[index];
                       return Card(
                         margin: const EdgeInsets.symmetric(vertical: 4),
                         child: ListTile(
@@ -66,29 +67,16 @@ class AdminUpdateDishView extends ConsumerWidget {
                             ),
                           ),
                           title: Text(
-                            dish.name,
+                            table.tableNumber,
                             style: const TextStyle(fontWeight: FontWeight.w600),
                           ),
-                          subtitle: Text('€${dish.price.toStringAsFixed(2)}'),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () {
-                                  context.goNamed(
-                                    AppRouteNames.adminUpdateDish,
-                                    extra: dish,
-                                  );
-                                },
-                              ),
+                          subtitle: Text('Capacity: ${table.capacity.toString()}'),
+                          trailing: 
                               IconButton(
                                 icon: const Icon(Icons.delete, color: Colors.red),
                                 onPressed: (){
-                                  ref.read(dishRemoveProvider(dish.id));
+                                  ref.read(deleteTableProvider(table.tableNumber));
                                 })
-                            ]
-                          )
                         ),
                       );
                     },

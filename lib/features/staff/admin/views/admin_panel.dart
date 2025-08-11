@@ -93,8 +93,15 @@ class AdminPanel extends StatelessWidget {
                       color: Colors.cyan, 
                       width: cardWidth, 
                       routeName: AppRouteNames.adminUpdateDishView),
-                    ],
-                )
+                    _buildDashboardCard(
+                      context, 
+                      icon: Icons.delete_outline, 
+                      label: 'Delete Table', 
+                      color: Colors.pink, 
+                      width: cardWidth, 
+                      routeName: AppRouteNames.adminTableDelete),
+                  ],
+                ),
               ],),
             ),
           ),

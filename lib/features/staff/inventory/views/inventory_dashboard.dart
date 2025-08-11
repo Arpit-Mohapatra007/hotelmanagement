@@ -214,7 +214,7 @@ class InventoryDashboard extends ConsumerWidget {
     final nameController = TextEditingController();
     final quantityController = TextEditingController();
     final priceController = TextEditingController();
-
+    final inventoryAsyncValue = ref.watch(getInventoryStreamProvider);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -260,7 +260,7 @@ class InventoryDashboard extends ConsumerWidget {
                   quantityController.text.isNotEmpty &&
                   priceController.text.isNotEmpty) {
                 final newInventory = Inventory(
-                  id: DateTime.now().millisecondsSinceEpoch.toString(),
+                  id: 'I0${inventoryAsyncValue.value!.length + 1}',
                   name: nameController.text,
                   quantity: int.parse(quantityController.text),
                   price: double.parse(priceController.text),

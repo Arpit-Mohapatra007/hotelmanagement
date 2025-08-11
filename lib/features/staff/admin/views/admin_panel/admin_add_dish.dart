@@ -25,7 +25,9 @@ class AdminAddDish extends HookConsumerWidget {
         title: const Text('Add New Dish'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () => context.pop(),
+          onPressed: () => context.goNamed(
+            AppRouteNames.adminPanel
+          ),
         ),
       ),
       body: SingleChildScrollView(
