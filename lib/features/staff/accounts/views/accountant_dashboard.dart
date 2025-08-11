@@ -28,7 +28,6 @@ class AccountsDashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final orderAsync = ref.watch(ordersProvider);
-    
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -42,7 +41,7 @@ class AccountsDashboard extends ConsumerWidget {
       ),
       body: orderAsync.when(
         data: (orders) {
-          // Filter orders for Bills in Progress (preparing or served)
+           // Filter orders for Bills in Progress (preparing or served)
           final billsInProgress = orders.where(
             (order) => order.status == 'preparing' || order.status == 'served'
           ).toList();
@@ -120,13 +119,27 @@ class AccountsDashboard extends ConsumerWidget {
                                       child: ElevatedButton(
                                         onPressed: () async {
                                           try {
+                                            final tableAsync = ref.watch(getTableByIdProvider(order.tableId));
+                                            // Create an updated order with 'paid' status
+                                            final updatedOrder = order.copyWith(status: 'paid');
+
+                                            // Update in 'orders' collection (full update for consistency)
+                                            await ref.read(updateOrderProvider(updatedOrder).future);
+
+                                            // Update in 'tables' document's orders array
+                                            await ref.read(updateOrderInTableProvider(
+                                              (tableNumber: tableAsync.value!.tableNumber, order: updatedOrder),
+                                            ).future);
+
+                                            // Invalidate the provider to refresh the UI with the updated table data
+                                            ref.invalidate(getTableByNumberProvider(tableAsync.value!.tableNumber));
+                                            
                                             await ref.read(
                                               updateOrderStatusProvider({
                                                 'orderId': order.orderId,
                                                 'status': 'paid'
                                               }).future
                                             );
-                                            
                                             ScaffoldMessenger.of(context).showSnackBar(
                                               SnackBar(
                                                 content: Text(
