@@ -14,6 +14,7 @@ import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_add
 import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_add_table.dart';
 import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_bills_view.dart';
 import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_finance_report.dart';
+import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_hero_dashboard.dart';
 import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_orders_view.dart';
 import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_table_delete.dart';
 import 'package:hotelmanagement/features/staff/admin/views/admin_panel/admin_table_status.dart';
@@ -176,7 +177,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         name: AppRouteNames.adminTableDelete,
         builder: (context, state) {
           return const AdminTableDelete();
-        },)
+        },),
+        GoRoute(path: '/adminHeroDashboard',
+        name: AppRouteNames.adminHeroDashboard,
+        builder: (context, state) {
+          return const AdminHeroDashboard();
+        },
+        ),
     ],
   );
 });

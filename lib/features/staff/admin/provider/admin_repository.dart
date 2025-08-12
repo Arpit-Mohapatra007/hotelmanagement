@@ -78,5 +78,36 @@ class AdminRepository {
       return totalRevenue - expenditure;
     });
   }
+
+  Future<void> saveHeroImageUrl({
+    required String hero1Url,
+    required String hero2Url,
+    required String hero3Url,
+  }) async {
+    final heroData = {
+      'h1': hero1Url,
+      'h2': hero2Url,
+      'h3': hero3Url,
+    };
+    await FirebaseFirestore.instance
+        .collection('admin')
+        .doc('heroImages')
+        .set(heroData, SetOptions(merge: true));
+  }
+
+  Future<Map<String, String>> getHeroImageUrls() async {
+    final doc = await FirebaseFirestore.instance
+        .collection('admin')
+        .doc('heroImages')
+        .get();
+    if (doc.exists) {
+      return {
+        'h1': doc.data()?['h1'] ?? '',
+        'h2': doc.data()?['h2'] ?? '',
+        'h3': doc.data()?['h3'] ?? '',
+      };
+    }
+    return {'h1': '', 'h2': '', 'h3': ''};
+  }
   
 }

@@ -102,6 +102,18 @@ class AdminPanel extends StatelessWidget {
                       routeName: AppRouteNames.adminTableDelete),
                   ],
                 ),
+                Row(
+                  children: [
+                    _buildDashboardCard(
+                      context,
+                      icon: Icons.dashboard_outlined,
+                      label: 'Hero Dashboard',
+                      color: Colors.teal,
+                      width: cardWidth,
+                      routeName: AppRouteNames.adminHeroDashboard,
+                    ),
+                  ],
+                )
               ],),
             ),
           ),

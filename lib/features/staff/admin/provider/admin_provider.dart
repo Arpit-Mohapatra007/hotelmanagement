@@ -32,3 +32,17 @@ final getExpenditureStreamProvider = StreamProvider<double>((ref) {
 final getNetProfitStreamProvider = StreamProvider<double>((ref) {
   return ref.watch(adminRepositoryProvider).getNetProfitStream();
 });
+
+final saveHeroImageUrlProvider = FutureProvider.autoDispose.family<void, Map<String, String>>((ref, heroUrls) {
+  final adminRepository = ref.watch(adminRepositoryProvider);
+  return adminRepository.saveHeroImageUrl(
+    hero1Url: heroUrls['h1'] ?? '',
+    hero2Url: heroUrls['h2'] ?? '',
+    hero3Url: heroUrls['h3'] ?? '',
+  );
+});
+
+final getHeroImageUrlsProvider = FutureProvider<Map<String, String>>((ref) {
+  final adminRepository = ref.watch(adminRepositoryProvider);
+  return adminRepository.getHeroImageUrls();
+});
