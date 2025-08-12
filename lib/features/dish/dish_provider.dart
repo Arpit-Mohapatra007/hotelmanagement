@@ -15,23 +15,18 @@ final availableDishesProvider = StreamProvider((ref) {
 });
 
 final dishSearchQueryProvider = StateProvider<String>((ref) => '');
-final searchedDishesProvider = FutureProvider.family<List<Dish>, String>((ref, query) async {
+
+final combinedSearchProvider = FutureProvider.family<List<Dish>, String>((ref, query) async {
   final repository = ref.watch(dishRepositoryProvider);
   if (query.isEmpty) {
-    // Return all available dishes if search query is empty
-    return repository.getAvailableDishes().first; // .first to convert Stream to Future
+    return repository.getAvailableDishes().first;
   }
-  return repository.searchDishesByName(query);
+  return repository.searchDishes(query);
 });
 
 final dishByIdProvider = FutureProvider.family<Dish?, String>((ref, dishId) async {
   final repository = ref.watch(dishRepositoryProvider);
   return repository.getDishById(dishId);
-});
-
-final dishByCategoryProvider = FutureProvider.family<List<Dish>, String>((ref, category) async {
-  final repository = ref.watch(dishRepositoryProvider);
-  return repository.searchDishesByCategory(category);
 });
 
 final dishAddProvider = FutureProvider.family<void, Dish>((ref, dish) async {

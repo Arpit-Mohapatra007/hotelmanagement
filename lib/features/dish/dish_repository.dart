@@ -17,24 +17,28 @@ class DishRepository {
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) => Dish.fromJson(doc.data())).toList());
   }
-  // search dish with name
-  Future<List<Dish>> searchDishesByName(String query) async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('dishes')
-        .where('name', isGreaterThanOrEqualTo: query)
-        .where('name', isLessThanOrEqualTo: '$query\uf8ff')
-        .get();
-    return snapshot.docs.map((doc) => Dish.fromJson(doc.data())).toList();
+  
+//combined search for both name and category
+Future<List<Dish>> searchDishes(String query) async {
+  query = query.toLowerCase().trim();
+  
+  if (query.isEmpty) {
+    // Return all available dishes if query is empty
+    return getAvailableDishes().first;
   }
-  // search dish with category
-  Future<List<Dish>> searchDishesByCategory(String query) async{
-     final snapshot = await FirebaseFirestore.instance
-        .collection('dishes')
-        .where('category', isGreaterThanOrEqualTo: query)
-        .where('category', isLessThanOrEqualTo: '$query\uf8ff')
-        .get();
-    return snapshot.docs.map((doc) => Dish.fromJson(doc.data())).toList();
-  } 
+  
+  final snapshot = await FirebaseFirestore.instance
+      .collection('dishes')
+      .where('isAvailable', isEqualTo: true)
+      .get();
+  
+  return snapshot.docs
+      .map((doc) => Dish.fromJson(doc.data()))
+      .where((dish) => 
+          dish.name.toLowerCase().contains(query) ||
+          dish.category.toLowerCase().contains(query))
+      .toList();
+}
   //get dish by id
   Future<Dish?> getDishById(String dishId) async {
     final doc = await FirebaseFirestore.instance.collection('dishes').doc(dishId).get();

@@ -22,8 +22,7 @@ class CustomerDashboard extends HookConsumerWidget {
     final searchQuery = ref.watch(dishSearchQueryProvider);
     
     // Watch searchedDishesProvider directly based on the searchQuery
-    final dishesAsync = ref.watch(searchedDishesProvider(searchQuery));
-    
+    final dishesAsync = ref.watch(combinedSearchProvider(searchQuery));
     // Watch the current order dishes and total for displaying in the UI
     final currentOrderDishes = ref.watch(currentOrderDishesProvider);
     final currentOrderTotal = ref.watch(currentOrderTotalProvider);
@@ -124,9 +123,9 @@ class CustomerDashboard extends HookConsumerWidget {
                 const SizedBox(width: 8.0),
                 ElevatedButton(
                   onPressed: () {
-                    // Trigger search on button press
-                    ref.read(dishSearchQueryProvider.notifier).state = searchController.text.trim();
-                  },
+                    final searchTerm = searchController.text.toLowerCase().trim();
+                    ref.read(dishSearchQueryProvider.notifier).state = searchTerm;
+                    },
                   child: const Icon(Icons.search),
                 ),
               ],
