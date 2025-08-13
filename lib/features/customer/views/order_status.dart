@@ -389,7 +389,7 @@ class OrderStatusWidget extends HookConsumerWidget {
                 ),
               ],
             ),
-          )).toList(),
+          )),
         ],
       ),
     );
@@ -525,7 +525,7 @@ Future<void> _showCancelConfirmationDialog(
                     ),
                   ],
                 ),
-              )).toList(),
+              )),
               const SizedBox(height: 12),
               const Text(
                 'This action cannot be undone.',
