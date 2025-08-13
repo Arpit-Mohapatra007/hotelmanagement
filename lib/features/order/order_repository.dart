@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
+import 'package:hotelmanagement/core/constants/order_status.dart';
 import 'package:hotelmanagement/core/models/dish.dart';
 import 'package:hotelmanagement/core/models/order.dart';
 
@@ -78,7 +79,7 @@ class OrderRepository {
         .collection('orders')
         .doc(orderId)
         .update({
-      'status': 'cancelled',
+      'status': OrderStatus.cancelled.name,
     });
   }
 
@@ -117,5 +118,15 @@ class OrderRepository {
 
   Future<void> deleteOrder(String orderId) async {
     await FirebaseFirestore.instance.collection('orders').doc(orderId).delete();
+  }
+
+  Stream<List<Order>> getOrdersByTableId(String tableId) {
+    return FirebaseFirestore.instance
+        .collection('orders')
+        .where('tableId', isEqualTo: tableId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => Order.fromJson(doc.data()))
+            .toList());
   }
 }

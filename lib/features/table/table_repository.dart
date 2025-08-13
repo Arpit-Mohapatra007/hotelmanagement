@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
-
 import 'package:hotelmanagement/core/models/table.dart';
-
 import 'package:hotelmanagement/core/models/order.dart';
 
 class TableRepository {
@@ -174,5 +172,5 @@ class TableRepository {
         .collection('tables')
         .doc(tableNumber)
         .update({'status': newStatus});
-  }
+  } 
 }

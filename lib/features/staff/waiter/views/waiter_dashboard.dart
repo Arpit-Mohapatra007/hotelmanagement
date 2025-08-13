@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hotelmanagement/core/constants/order_status.dart';
+import 'package:hotelmanagement/core/models/dish.dart';
 import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:hotelmanagement/features/order/order_provider.dart';
 import 'package:hotelmanagement/features/table/table_provider.dart';
@@ -75,7 +77,7 @@ class WaiterDashboard extends ConsumerWidget {
                   
                   // Filter out unknown and paid orders
                   final filteredOrders = orders.where((order) => 
-                    order.status != 'unknown' && order.status != 'paid' && order.status != 'cancelled' && order.status != 'served'
+                    order.status != OrderStatus.paid.name && order.status != OrderStatus.cancelled.name && order.status != OrderStatus.served.name
                   ).toList();
                   
                   // Sort orders by priority: ready, preparing, served, cancelled
@@ -208,10 +210,10 @@ Widget? _buildTrailingButton(BuildContext context, WidgetRef ref, order) {
    List<String> availableStatuses = [];
   switch (order.status) {
     case 'preparing':
-      availableStatuses = ['cancelled'];
+      availableStatuses = [OrderStatus.cancelled.name];
       break;
     case 'ready':
-      availableStatuses = ['served', 'cancelled'];
+      availableStatuses = [OrderStatus.served.name, OrderStatus.cancelled.name];
       break;
     default:
       return null;
@@ -234,7 +236,7 @@ Widget? _buildTrailingButton(BuildContext context, WidgetRef ref, order) {
     }).toList(),
     onChanged: (String? newStatus) async {
       if (newStatus != null) {
-         if (newStatus == 'cancelled') {
+         if (newStatus == OrderStatus.cancelled.name) {
           final shouldCancel = await _showCancelConfirmationDialog(context, order.orderId);
           if (!shouldCancel) return;
         }
@@ -315,10 +317,10 @@ Widget? _buildTrailingButton(BuildContext context, WidgetRef ref, order) {
   }
 
   // ignore: strict_top_level_inference
-  Widget _buildDishCard(dish, String orderStatus) {
+  Widget _buildDishCard(Dish dish, String orderStatus) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4),
-      color: orderStatus == 'ready' ? const Color.fromARGB(255, 11, 150, 249) : Colors.grey[150],
+      color: orderStatus == OrderStatus.ready.name ? const Color.fromARGB(255, 11, 150, 249) : Colors.grey[150],
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Row(
@@ -345,7 +347,7 @@ Widget? _buildTrailingButton(BuildContext context, WidgetRef ref, order) {
                 ],
               ),
             ),
-            if (orderStatus == 'ready')
+            if (orderStatus == OrderStatus.ready.name)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(

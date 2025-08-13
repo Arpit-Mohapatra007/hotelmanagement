@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide Table;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hotelmanagement/core/constants/table_status.dart';
 import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:hotelmanagement/features/table/table_provider.dart';
 
@@ -57,7 +58,7 @@ class AdminAddTable extends HookConsumerWidget {
                   final newTable = Table(
                     tableId: '${tableAsync.value!.length + 1}',
                     tableNumber: tableNumber,
-                    status: 'Available',
+                    status: TableStatus.available.name,
                     orders: [],
                     currentBill: 0.0,
                     capacity: capacity,

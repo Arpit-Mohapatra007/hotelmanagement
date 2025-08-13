@@ -52,7 +52,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             name: AppRouteNames.orderStatus,
             builder: (context, state) {
               final tableNumber = state.pathParameters['tableNumber'];
-              return OrderStatus(tableNumber: tableNumber!);
+              return OrderStatusWidget(tableNumber: tableNumber!);
             },
           ),
           GoRoute(path: 'bill',

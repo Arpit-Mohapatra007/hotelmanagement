@@ -37,12 +37,6 @@ final addOrderToTableProvider = FutureProvider.autoDispose.family<void, ({String
   return repository.addOrderToTable(args.tableNumber, args.order);
 });
 
-
-final getOrdersForTableProvider = StreamProvider.autoDispose.family<List<Order>, String>((ref, tableNumber) {
-  final repository = ref.watch(tableRepositoryProvider);
-  return repository.getOrdersForTable(tableNumber);
-});
-
 final checkTableExistsProvider = FutureProvider.autoDispose.family<bool, String>((ref, tableNumber) {
   final repository = ref.watch(tableRepositoryProvider);
   return repository.checkTableExists(tableNumber);

@@ -1,6 +1,11 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hotelmanagement/core/constants/order_status.dart';
+import 'package:hotelmanagement/core/models/dish.dart';
+import 'package:hotelmanagement/core/models/order.dart';
 import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:hotelmanagement/features/inventory/inventory_provider.dart';
 import 'package:hotelmanagement/features/order/order_provider.dart';
@@ -45,11 +50,10 @@ class ChefDashboard extends ConsumerWidget {
         data: (orders) {
           // Filter out cancelled, unknown, and paid orders
           final filteredOrders = orders.where((order) => 
-            order.status != 'cancelled' && 
-            order.status != 'unknown' && 
-            order.status != 'paid' &&
-            order.status != 'ready' &&
-            order.status != 'served'
+            order.status != OrderStatus.cancelled.name  && 
+            order.status != OrderStatus.paid.name &&
+            order.status != OrderStatus.ready.name &&
+            order.status != OrderStatus.served.name
           ).toList();
           
           // Sort orders by priority: ready, preparing, served
@@ -265,11 +269,11 @@ class ChefDashboard extends ConsumerWidget {
     );
   }
 
-  Widget? _buildTrailingButton(BuildContext context, WidgetRef ref, order, tableId) {
+  Widget? _buildTrailingButton(BuildContext context, WidgetRef ref,Order order, tableId) {
     final tableAsync = ref.watch(getTableByIdProvider(tableId));
     
     // Only show buttons for 'preparing' status
-    if (order.status != 'preparing') {
+    if (order.status != OrderStatus.preparing.name) {
       return null;
     }
 
@@ -281,7 +285,7 @@ class ChefDashboard extends ConsumerWidget {
           onPressed: () async {
             try {
               // Create an updated order with 'cancelled' status
-              final updatedOrder = order.copyWith(status: 'cancelled');
+              final updatedOrder = order.copyWith(status: OrderStatus.cancelled.name);
 
               // Update in 'orders' collection (full update for consistency)
               await ref.read(updateOrderProvider(updatedOrder).future);
@@ -297,7 +301,7 @@ class ChefDashboard extends ConsumerWidget {
               await ref.read(
                 updateOrderStatusProvider({
                   'orderId': order.orderId,
-                  'status': 'cancelled'
+                  'status': OrderStatus.cancelled.name
                 }).future
               );
               
@@ -349,7 +353,7 @@ class ChefDashboard extends ConsumerWidget {
 
               if (deductionResult['success'] == true) {
                 // Ingredients successfully deducted, update order status
-                final updatedOrder = order.copyWith(status: 'ready');
+                final updatedOrder = order.copyWith(status: OrderStatus.ready.name);
 
                 await ref.read(updateOrderProvider(updatedOrder).future);
                 await ref.read(updateOrderInTableProvider(
@@ -361,7 +365,7 @@ class ChefDashboard extends ConsumerWidget {
                 await ref.read(
                   updateOrderStatusProvider({
                     'orderId': order.orderId,
-                    'status': 'ready'
+                    'status': OrderStatus.ready.name
                   }).future
                 );
 
@@ -419,7 +423,7 @@ class ChefDashboard extends ConsumerWidget {
     );
   }
 
-  Widget _buildDishCard(dish) {
+  Widget _buildDishCard(Dish dish) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4),
       color: const Color.fromARGB(255, 0, 0, 0),

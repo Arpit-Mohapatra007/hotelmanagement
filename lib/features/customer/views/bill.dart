@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hotelmanagement/core/constants/order_status.dart';
+import 'package:hotelmanagement/core/constants/table_status.dart';
 import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:hotelmanagement/features/table/table_provider.dart';
 import 'package:hotelmanagement/core/models/dish.dart';
@@ -37,7 +39,7 @@ class BillView extends HookConsumerWidget {
 
           // 1. Filter for orders that should be on the bill
           final billableOrders = table.orders.where(
-              (o) => o.status == 'preparing' || o.status == 'delivered');
+              (o) => o.status == OrderStatus.preparing.name || o.status == OrderStatus.ready.name);
 
           if (billableOrders.isEmpty) {
             return const Center(child: Text('No items to bill for this table.'));
@@ -117,7 +119,7 @@ class BillView extends HookConsumerWidget {
                       if (tipAmount > 0) {
                         await ref.read(addTipToTableProvider((tableNumber: tableNumber, tipAmount: tipAmount)).future);
                         }
-                      ref.read(updateTableStatusProvider((tableNumber: tableNumber, newStatus: 'available')));
+                      ref.read(updateTableStatusProvider((tableNumber: tableNumber, newStatus: TableStatus.available.name)).future);
                       
                       // TODO: Implement payment logic
                       ScaffoldMessenger.of(context).showSnackBar(

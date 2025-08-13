@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hotelmanagement/core/constants/order_status.dart';
 import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:hotelmanagement/features/order/order_provider.dart';
 import 'package:hotelmanagement/features/table/table_provider.dart';
@@ -43,12 +44,12 @@ class AdminBillsView extends ConsumerWidget {
         data: (orders) {
           // Filter orders for Bills in Progress (preparing or served)
           final billsInProgress = orders.where(
-            (order) => order.status == 'preparing' || order.status == 'served'
+            (order) => order.status == OrderStatus.preparing.name || order.status == OrderStatus.served.name
           ).toList();
           
           // Filter orders for Bills Paid
           final billsPaid = orders.where(
-            (order) => order.status == 'paid'
+            (order) => order.status == OrderStatus.paid.name
           ).toList();
           
           return Padding(
@@ -87,11 +88,11 @@ class AdminBillsView extends ConsumerWidget {
                               margin: const EdgeInsets.symmetric(vertical: 4),
                               child: ListTile(
                                 leading: CircleAvatar(
-                                  backgroundColor: order.status == 'preparing' 
+                                  backgroundColor: order.status == OrderStatus.preparing.name 
                                       ? Colors.orange 
                                       : Colors.green,
                                   child: Text(
-                                    order.status == 'preparing' ? 'P' : 'S',
+                                    order.status == OrderStatus.preparing.name ? 'P' : 'S',
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -121,7 +122,7 @@ class AdminBillsView extends ConsumerWidget {
                                           try {
                                             final tableAsync = ref.watch(getTableByIdProvider(order.tableId));
                                             // Create an updated order with 'paid' status
-                                            final updatedOrder = order.copyWith(status: 'paid');
+                                            final updatedOrder = order.copyWith(status: OrderStatus.paid.name);
 
                                             // Update in 'orders' collection (full update for consistency)
                                             await ref.read(updateOrderProvider(updatedOrder).future);
@@ -137,7 +138,7 @@ class AdminBillsView extends ConsumerWidget {
                                             await ref.read(
                                               updateOrderStatusProvider({
                                                 'orderId': order.orderId,
-                                                'status': 'paid'
+                                                'status': OrderStatus.paid.name,
                                               }).future
                                             );
                                             ScaffoldMessenger.of(context).showSnackBar(

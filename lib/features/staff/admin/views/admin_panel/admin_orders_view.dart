@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hotelmanagement/core/constants/order_status.dart';
 import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:hotelmanagement/features/order/order_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,7 +45,7 @@ class AdminOrdersView extends ConsumerWidget {
                           onPressed: () async {
                             await ref.read(updateOrderStatusProvider({
                               'orderId': order.orderId,
-                              'status': 'preparing'
+                              'status': OrderStatus.preparing.name
                             }).future);
                           },
                           icon: const Icon(Icons.food_bank),
@@ -53,7 +54,7 @@ class AdminOrdersView extends ConsumerWidget {
                           onPressed: () async {
                             await ref.read(updateOrderStatusProvider({
                               'orderId': order.orderId,
-                              'status': 'served'
+                              'status': OrderStatus.served.name
                             }).future);
                           },
                           icon: const Icon(Icons.room_service),
@@ -62,7 +63,7 @@ class AdminOrdersView extends ConsumerWidget {
                           onPressed: () async {
                             await ref.read(updateOrderStatusProvider({
                               'orderId': order.orderId,
-                              'status': 'paid'
+                              'status': OrderStatus.paid.name
                             }).future);
                           },
                           icon: const Icon(Icons.payments),

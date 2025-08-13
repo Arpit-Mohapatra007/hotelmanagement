@@ -1,6 +1,11 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hotelmanagement/core/constants/order_status.dart';
+import 'package:hotelmanagement/core/models/dish.dart';
+import 'package:hotelmanagement/core/models/order.dart';
 import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:hotelmanagement/features/order/order_provider.dart';
 import 'package:hotelmanagement/features/table/table_provider.dart';
@@ -95,7 +100,7 @@ class OrderDetails extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusCard(order) {
+  Widget _buildStatusCard(Order order) {
     Color statusColor = _getStatusColor(order.status);
     IconData statusIcon = _getStatusIcon(order.status);
     
@@ -171,7 +176,7 @@ class OrderDetails extends ConsumerWidget {
     );
   }
 
-  Widget _buildOrderInfoCard(order, AsyncValue tableAsync) {
+  Widget _buildOrderInfoCard(Order order, AsyncValue tableAsync) {
     return Card(
       elevation: 4,
       child: Padding(
@@ -230,7 +235,7 @@ class OrderDetails extends ConsumerWidget {
     );
   }
 
-  Widget _buildDishesSection(order) {
+  Widget _buildDishesSection(Order order) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -256,7 +261,7 @@ class OrderDetails extends ConsumerWidget {
     );
   }
 
-  Widget _buildDishCard(dish, int itemNumber) {
+  Widget _buildDishCard(Dish dish, int itemNumber) {
     return Card(
       elevation: 2,
       child: Padding(
@@ -393,7 +398,7 @@ class OrderDetails extends ConsumerWidget {
     );
   }
 
-  Widget _buildOrderSummary(order) {
+  Widget _buildOrderSummary(Order order) {
     final subtotal = order.price;
     const tax = 0.0; // Adjust tax calculation as needed
     final total = subtotal + tax;
@@ -453,8 +458,8 @@ class OrderDetails extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, WidgetRef ref, order) {
-    if (order.status == 'paid' || order.status == 'served' || order.status == 'cancelled') {
+  Widget _buildActionButtons(BuildContext context, WidgetRef ref, Order order) {
+    if (order.status == OrderStatus.paid.name || order.status == OrderStatus.served.name || order.status == OrderStatus.cancelled.name) {
       return const SizedBox.shrink(); // No actions for completed orders
     }
 
@@ -473,13 +478,13 @@ class OrderDetails extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 12),
-            if (order.status == 'preparing')
+            if (order.status == OrderStatus.preparing.name)
               ElevatedButton.icon(
                 onPressed: () async {
                   try {
                     await ref.read(updateOrderStatusProvider({
                       'orderId': order.orderId,
-                      'status': 'ready'
+                      'status': OrderStatus.ready.name
                     }).future);
                     
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -504,13 +509,13 @@ class OrderDetails extends ConsumerWidget {
                   foregroundColor: Colors.white,
                 ),
               ),
-            if (order.status == 'ready')
+            if (order.status == OrderStatus.ready.name)
               ElevatedButton.icon(
                 onPressed: () async {
                   try {
                     await ref.read(updateOrderStatusProvider({
                       'orderId': order.orderId,
-                      'status': 'served'
+                      'status': OrderStatus.served.name
                     }).future);
                     
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -628,7 +633,7 @@ class OrderDetails extends ConsumerWidget {
                 try {
                   await ref.read(updateOrderStatusProvider({
                     'orderId': order.orderId,
-                    'status': 'cancelled'
+                    'status': OrderStatus.cancelled.name
                   }).future);
                   
                   ScaffoldMessenger.of(context).showSnackBar(

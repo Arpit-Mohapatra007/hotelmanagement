@@ -68,3 +68,8 @@ final deleteOrderProvider = FutureProvider.family<void, String>((ref, orderId){
   final repository = ref.watch(orderRepositoryProvider);
   return repository.deleteOrder(orderId);
 });
+
+final getOrdersByTableIdProvider = StreamProvider.family<List<Order>, String>((ref, tableId) {
+  final repository = ref.watch(orderRepositoryProvider);
+  return repository.getOrdersByTableId(tableId);
+});

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter_hooks/flutter_hooks.dart'; 
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hotelmanagement/core/constants/order_status.dart'; 
 import 'package:hotelmanagement/core/models/order.dart';
 import 'package:hotelmanagement/core/models/dish.dart';
 import 'package:hotelmanagement/core/router/route_names.dart';
@@ -26,7 +27,7 @@ class CustomerCart extends HookConsumerWidget {
     Order? activeOrder;
     if (tableAsync.hasValue && tableAsync.value != null) {
       activeOrder = tableAsync.value!.orders.firstWhereOrNull(
-        (o) => o.status == 'pending' || o.status == 'preparing',
+        (o) => o.status == OrderStatus.preparing.name,
       );
     }
     final Map<Dish, int> dishQuantities = {};
@@ -189,11 +190,10 @@ class CustomerCart extends HookConsumerWidget {
                           dishes: List.from(currentOrderDishes),
                           price: currentOrderTotal,
                           timeStamp: DateTime.now().toIso8601String(),
-                          status: 'preparing', 
+                          status: OrderStatus.preparing.name, 
                           specialInstructions: currentSpecialInstructions,
                         );
 
-                        // Add to both collections - FIXED: Use correct providers
                         await ref.read(addOrderProvider(newOrder).future);
                         await ref.read(addOrderToTableProvider(
                           (tableNumber: currentTable.tableNumber, order: newOrder)
