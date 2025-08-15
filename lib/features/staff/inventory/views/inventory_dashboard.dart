@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hotelmanagement/core/dialogs/delete_item_dialog.dart';
 import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:hotelmanagement/core/models/inventory.dart';
 import 'package:hotelmanagement/features/inventory/inventory_provider.dart';
@@ -198,7 +199,10 @@ class InventoryDashboard extends ConsumerWidget {
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              final shouldDelete = await showDeleteItemDialog(context: context, itemName: item.name);
+              if (!shouldDelete) return;
+              // Call the delete provider function
               ref.read(deleteInventoryProvider(item.id));
               Navigator.of(context).pop();
             },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hotelmanagement/core/dialogs/delete_table_dialog.dart';
 import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hotelmanagement/features/dish/dish_provider.dart';
@@ -74,7 +75,13 @@ class AdminTableDelete extends ConsumerWidget {
                           trailing: 
                               IconButton(
                                 icon: const Icon(Icons.delete, color: Colors.red),
-                                onPressed: (){
+                                onPressed: () async {
+                                  final shouldDelete = await showTableDeleteDialog(
+                                    context,
+                                    tableName: table.tableNumber,
+                                  );
+                                  if(!shouldDelete) return;
+                                  // Trigger the delete action
                                   ref.read(deleteTableProvider(table.tableNumber));
                                 })
                         ),

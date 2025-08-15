@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hotelmanagement/core/dialogs/delete_dish_dialog.dart';
 import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hotelmanagement/features/dish/dish_provider.dart';
@@ -84,7 +85,10 @@ class AdminUpdateDishView extends ConsumerWidget {
                               ),
                               IconButton(
                                 icon: const Icon(Icons.delete, color: Colors.red),
-                                onPressed: (){
+                                onPressed: () async {
+                                  final shouldDelete = await showDeleteDishDialog(context, dish: dish);
+                                  if (!shouldDelete) return;
+                                  // Call the provider to remove the dish
                                   ref.read(dishRemoveProvider(dish.id));
                                 })
                             ]

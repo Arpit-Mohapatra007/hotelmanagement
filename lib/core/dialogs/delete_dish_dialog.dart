@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:hotelmanagement/core/dialogs/generic_dialog.dart';
+import 'package:hotelmanagement/core/models/dish.dart';
 
-Future<bool> showCancelOrderDialog(
+Future<bool> showDeleteDishDialog(
   BuildContext context, {
-  required String orderId,
+  required Dish dish,
 }) async {
   return showGenericDialog<bool>(
     context: context,
-    title: 'Cancel Order',
-    content: 'Are you sure you want to cancel order $orderId?',
+    title: 'Delete Dish',
+    content: 'Are you sure you want to delete the dish "${dish.name}"?',
     optionsBuilder: () => {
       'Cancel': false,
-      'Confirm': true,
+      'Delete': true,
     },
   ).then((value) => value ?? false);
 }

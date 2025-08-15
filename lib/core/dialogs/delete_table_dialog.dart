@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:hotelmanagement/core/dialogs/generic_dialog.dart';
 
-Future<bool> showCancelOrderDialog(
+Future<bool> showTableDeleteDialog(
   BuildContext context, {
-  required String orderId,
+  required String tableName,
 }) async {
   return showGenericDialog<bool>(
     context: context,
-    title: 'Cancel Order',
-    content: 'Are you sure you want to cancel order $orderId?',
+    title: 'Delete Table',
+    content: 'Are you sure you want to delete the table "$tableName"?',
     optionsBuilder: () => {
       'Cancel': false,
-      'Confirm': true,
+      'Delete': true,
     },
   ).then((value) => value ?? false);
 }

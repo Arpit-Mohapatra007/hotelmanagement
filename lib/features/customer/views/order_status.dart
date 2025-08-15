@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hotelmanagement/core/constants/order_status.dart';
+import 'package:hotelmanagement/core/dialogs/cancel_all_order_dialog.dart';
 import 'package:hotelmanagement/core/models/order.dart';
 import 'package:hotelmanagement/features/order/order_provider.dart';
 import 'package:hotelmanagement/features/table/table_provider.dart';
@@ -475,7 +476,46 @@ class OrderStatusWidget extends HookConsumerWidget {
         SizedBox(
           width: double.infinity,
           child: TextButton.icon(
-            onPressed: () => _showCancelConfirmationDialog(context, ref, orders, tableNumber),
+            onPressed: ()async {
+              final shouldCancelAll = await showCancelAllOrderDialog(context, orders, tableNumber);
+              if(!shouldCancelAll) return;
+              final tableAsync = ref.watch(getTableByNumberProvider(tableNumber));
+              // Cancel all active orders
+              for (final order in orders) {
+                if (order.status != OrderStatus.cancelled.name && order.status != OrderStatus.paid.name && order.status != OrderStatus.served.name) {
+                  try {
+                      if (!tableAsync.hasValue || tableAsync.value == null) {
+                      throw Exception('Table information not available');
+                    }
+
+                    final table = tableAsync.value!;
+                    final updatedOrder = order.copyWith(status: OrderStatus.cancelled.name);
+
+                    await ref.read(updateOrderProvider(updatedOrder).future);
+
+                    await ref.read(updateOrderInTableProvider(
+                      (tableNumber: table.tableNumber, order: updatedOrder),
+                    ).future);
+
+                    ref.invalidate(getTableByIdProvider(order.tableId));
+                    
+                    await ref.read(
+                      updateOrderStatusProvider({
+                        'orderId': order.orderId,
+                        'status': OrderStatus.cancelled.name,
+                      }).future
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              }
+            }, 
             icon: const Icon(Icons.cancel_outlined),
             label: const Text('Cancel All Active Orders'),
             style: TextButton.styleFrom(
@@ -486,149 +526,5 @@ class OrderStatusWidget extends HookConsumerWidget {
         ),
       ],
     );
-  }
-}
-
-// Enhanced cancel confirmation dialog
-Future<void> _showCancelConfirmationDialog(
-    BuildContext context, WidgetRef ref, List<Order> orders, String tableNumber) async {
-  return showDialog<void>(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.warning_amber, color: Colors.red),
-            SizedBox(width: 8),
-            Text('Cancel Orders'),
-          ],
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('You are about to cancel ${orders.length} active order${orders.length > 1 ? 's' : ''}:'),
-              const SizedBox(height: 12),
-              ...orders.map((order) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Row(
-                  children: [
-                    const Icon(Icons.arrow_right, size: 16),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Order ${order.orderId.split('_').last.substring(0, 8)}... (${order.dishes.length} items)',
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                    ),
-                  ],
-                ),
-              )),
-              const SizedBox(height: 12),
-              const Text(
-                'This action cannot be undone.',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Keep Orders'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await _cancelOrders(context, ref, orders, tableNumber);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Yes, Cancel All'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-// Updated cancel function with proper invalidation
-Future<void> _cancelOrders(BuildContext context, WidgetRef ref, List<Order> orders, String tableNumber) async {
-  try {
-    // Show loading indicator
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-
-    for (final order in orders) {
-      final updatedOrder = order.copyWith(status: OrderStatus.cancelled.name);
-      
-      await ref.read(updateOrderProvider(updatedOrder).future);
-      await ref.read(updateOrderInTableProvider(
-        (tableNumber: tableNumber, order: updatedOrder),
-      ).future);
-    }
-
-    // Invalidate all relevant providers for immediate update
-    ref.invalidate(getTableByNumberProvider(tableNumber));
-    
-    // Get table to invalidate orders provider
-    final table = ref.read(getTableByNumberProvider(tableNumber)).valueOrNull;
-    if (table != null) {
-      ref.invalidate(getOrdersByTableIdProvider(table.tableId));
-    }
-
-    // Close loading dialog
-    if (context.mounted) {
-      Navigator.of(context).pop();
-    }
-    
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.check_circle, color: Colors.white),
-              const SizedBox(width: 8),
-              Text('${orders.length} order${orders.length > 1 ? 's' : ''} cancelled successfully'),
-            ],
-          ),
-          backgroundColor: Colors.green,
-          duration: const Duration(seconds: 3),
-        ),
-      );
-    }
-  } catch (e) {
-    // Close loading dialog
-    if (context.mounted) {
-      Navigator.of(context).pop();
-    }
-    
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.error, color: Colors.white),
-              const SizedBox(width: 8),
-              Expanded(child: Text('Failed to cancel orders: $e')),
-            ],
-          ),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 5),
-        ),
-      );
-    }
   }
 }

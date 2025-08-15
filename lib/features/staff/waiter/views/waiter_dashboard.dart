@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hotelmanagement/core/constants/order_status.dart';
+import 'package:hotelmanagement/core/dialogs/cancel_order_dialog.dart';
 import 'package:hotelmanagement/core/models/dish.dart';
 import 'package:hotelmanagement/core/router/route_names.dart';
 import 'package:hotelmanagement/features/order/order_provider.dart';
@@ -237,7 +238,7 @@ Widget? _buildTrailingButton(BuildContext context, WidgetRef ref, order) {
     onChanged: (String? newStatus) async {
       if (newStatus != null) {
          if (newStatus == OrderStatus.cancelled.name) {
-          final shouldCancel = await _showCancelConfirmationDialog(context, order.orderId);
+          final shouldCancel = await showCancelOrderDialog(context, orderId: '${order.orderId}');
           if (!shouldCancel) return;
         }
 
@@ -368,28 +369,4 @@ Widget? _buildTrailingButton(BuildContext context, WidgetRef ref, order) {
       ),
     );
   }
-}
-
-Future<bool> _showCancelConfirmationDialog(BuildContext context, String orderId) async {
-  return await showDialog<bool>(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Cancel Order'),
-        content: Text('Are you sure you want to cancel order $orderId?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('No'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Yes, Cancel'),
-          ),
-        ],
-      );
-    },
-  ) ?? false;
 }

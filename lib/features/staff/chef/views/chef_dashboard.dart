@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hotelmanagement/core/constants/order_status.dart';
+import 'package:hotelmanagement/core/dialogs/cancel_order_dialog.dart';
+import 'package:hotelmanagement/core/dialogs/ingredients_unavailable_dialog.dart';
 import 'package:hotelmanagement/core/models/dish.dart';
 import 'package:hotelmanagement/core/models/order.dart';
 import 'package:hotelmanagement/core/router/route_names.dart';
@@ -283,6 +285,11 @@ class ChefDashboard extends ConsumerWidget {
         // Cancel Button
         ElevatedButton(
           onPressed: () async {
+            // Show confirmation dialog
+            final shouldCancel = await showCancelOrderDialog(context, orderId: order.orderId);
+            if (!shouldCancel){
+              return;
+            }
             try {
               // Create an updated order with 'cancelled' status
               final updatedOrder = order.copyWith(status: OrderStatus.cancelled.name);
@@ -382,19 +389,8 @@ class ChefDashboard extends ConsumerWidget {
                 // Ingredient deduction failed
                 final message = deductionResult['message'] as String;
                 
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Ingredients Not Available'),
-                    content: Text(message),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  ),
-                );
+                await showIngredientsUnavailableDialog(
+                  context, message);
               }
             } catch (e) {
               // Close loading dialog if still open
