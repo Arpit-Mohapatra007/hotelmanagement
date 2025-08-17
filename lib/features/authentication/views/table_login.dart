@@ -59,7 +59,6 @@ class TableLogin extends HookConsumerWidget {
               const SizedBox(height: 24),
               TextField(
                 controller: tableController,
-                keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 decoration: const InputDecoration(
