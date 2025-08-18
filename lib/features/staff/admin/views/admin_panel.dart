@@ -2,8 +2,70 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hotelmanagement/core/router/route_names.dart';
 
-class AdminPanel extends StatelessWidget {
+// Safe opacity extension (copied from dashboard)
+extension ColorExtensions on Color {
+  Color withOpacityFactor(double opacity) {
+    final safeOpacity = opacity.clamp(0.0, 1.0);
+    return withAlpha((safeOpacity * 255).round());
+  }
+}
+
+class AdminPanel extends StatefulWidget {
   const AdminPanel({super.key});
+  @override
+  State<AdminPanel> createState() => _AdminPanelState();
+}
+
+class _AdminPanelState extends State<AdminPanel> with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late AnimationController _floatingController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _floatingAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+    _floatingController = AnimationController(
+      duration: const Duration(milliseconds: 3000),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOut,
+    ));
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutBack,
+    ));
+    _floatingAnimation = Tween<double>(
+      begin: -8.0,
+      end: 8.0,
+    ).animate(CurvedAnimation(
+      parent: _floatingController,
+      curve: Curves.easeInOut,
+    ));
+
+    _animationController.forward();
+    _floatingController.repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _floatingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,150 +73,360 @@ class AdminPanel extends StatelessWidget {
     final cardWidth = screenWidth / 2 - 32;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('ADMIN PANEL'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () {
-            context.goNamed(AppRouteNames.adminDashboard);
-          },
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF667eea),
+              Color(0xFF764ba2),
+              Color(0xFF9068BE),
+            ],
+          ),
         ),
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  children: [
-                    _buildDashboardCard(
-                      context, 
-                      icon: Icons.receipt_long_outlined, 
-                      label: 'Bills', 
-                      color: Colors.orange, 
-                      width: cardWidth, 
-                      routeName: AppRouteNames.adminBillsView),
-                    _buildDashboardCard(
-                      context, 
-                      icon: Icons.table_bar_outlined, 
-                      label: 'Table Status', 
-                      color: Colors.blue, 
-                      width: cardWidth, 
-                      routeName: AppRouteNames.adminTableStatus),
-                  ],
-                ),
-                Row(
-                  children: [
-                   _buildDashboardCard(
-                      context, 
-                      icon: Icons.list_alt_outlined, 
-                      label: 'Orders', 
-                      color: Colors.purple, 
-                      width: cardWidth, 
-                      routeName: AppRouteNames.adminOrdersView),
-                    _buildDashboardCard(
-                      context, 
-                      icon: Icons.bar_chart_outlined, 
-                      label: 'Finance Report', 
-                      color: Colors.red, 
-                      width: cardWidth, 
-                      routeName: AppRouteNames.adminFinanceReport),
-              
-                  ],
-                ),
-                Row(
-                  children: [
-                    _buildDashboardCard(
-                      context, 
-                      icon: Icons.food_bank_outlined, 
-                      label: 'Add New Dish', 
-                      color: Colors.yellow, 
-                      width: cardWidth, 
-                      routeName: AppRouteNames.adminAddDish
+        child: SafeArea(
+          child: Column(
+            children: [
+              _buildEnhancedAppBar(context),
+              const SizedBox(height: 16),
+              Expanded(
+                child: AnimatedBuilder(
+                  animation: _floatingAnimation,
+                  builder: (context, child) {
+                    return Transform.translate(
+                      offset: Offset(0, _floatingAnimation.value),
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: SlideTransition(
+                          position: _slideAnimation,
+                          child: Container(
+                            margin: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(25),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacityFactor(0.15),
+                                  blurRadius: 25,
+                                  offset: const Offset(0, 15),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(25),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        _buildAnimatedRow(context, [
+                                          _buildEnhancedDashboardCard(
+                                            context,
+                                            icon: Icons.receipt_long_outlined,
+                                            label: 'Bills',
+                                            color: Colors.orange,
+                                            width: cardWidth,
+                                            routeName: AppRouteNames.adminBillsView,
+                                            delay: 200,
+                                          ),
+                                          const SizedBox(width: 16),
+                                          _buildEnhancedDashboardCard(
+                                            context,
+                                            icon: Icons.table_bar_outlined,
+                                            label: 'Table Status',
+                                            color: Colors.blue,
+                                            width: cardWidth,
+                                            routeName: AppRouteNames.adminTableStatus,
+                                            delay: 400,
+                                          ),
+                                        ], 0),
+                                        const SizedBox(height: 16),
+                                        _buildAnimatedRow(context, [
+                                          _buildEnhancedDashboardCard(
+                                            context,
+                                            icon: Icons.list_alt_outlined,
+                                            label: 'Orders',
+                                            color: Colors.purple,
+                                            width: cardWidth,
+                                            routeName: AppRouteNames.adminOrdersView,
+                                            delay: 600,
+                                          ),
+                                          const SizedBox(width: 16),
+                                          _buildEnhancedDashboardCard(
+                                            context,
+                                            icon: Icons.bar_chart_outlined,
+                                            label: 'Finance Report',
+                                            color: Colors.red,
+                                            width: cardWidth,
+                                            routeName: AppRouteNames.adminFinanceReport,
+                                            delay: 800,
+                                          ),
+                                        ], 1),
+                                        const SizedBox(height: 16),
+                                        _buildAnimatedRow(context, [
+                                          _buildEnhancedDashboardCard(
+                                            context,
+                                            icon: Icons.food_bank_outlined,
+                                            label: 'Add New Dish',
+                                            color: Colors.yellow.shade700,
+                                            width: cardWidth,
+                                            routeName: AppRouteNames.adminAddDish,
+                                            delay: 1000,
+                                          ),
+                                          const SizedBox(width: 16),
+                                          _buildEnhancedDashboardCard(
+                                            context,
+                                            icon: Icons.table_restaurant_outlined,
+                                            label: 'Add New Table',
+                                            color: Colors.green,
+                                            width: cardWidth,
+                                            routeName: AppRouteNames.adminAddTable,
+                                            delay: 1200,
+                                          ),
+                                        ], 2),
+                                        const SizedBox(height: 16),
+                                        _buildAnimatedRow(context, [
+                                          _buildEnhancedDashboardCard(
+                                            context,
+                                            icon: Icons.edit_note_outlined,
+                                            label: 'Update Dish',
+                                            color: Colors.cyan,
+                                            width: cardWidth,
+                                            routeName: AppRouteNames.adminUpdateDishView,
+                                            delay: 1400,
+                                          ),
+                                          const SizedBox(width: 16),
+                                          _buildEnhancedDashboardCard(
+                                            context,
+                                            icon: Icons.delete_outline,
+                                            label: 'Delete Table',
+                                            color: Colors.pink,
+                                            width: cardWidth,
+                                            routeName: AppRouteNames.adminTableDelete,
+                                            delay: 1600,
+                                          ),
+                                        ], 3),
+                                        const SizedBox(height: 16),
+                                        _buildAnimatedRow(context, [
+                                          _buildEnhancedDashboardCard(
+                                            context,
+                                            icon: Icons.dashboard_outlined,
+                                            label: 'Hero Dashboard',
+                                            color: Colors.teal,
+                                            width: cardWidth,
+                                            routeName: AppRouteNames.adminHeroDashboard,
+                                            delay: 1800,
+                                          ),
+                                        ], 4),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                    _buildDashboardCard(
-                      context, 
-                      icon: Icons.table_restaurant_outlined, 
-                      label: 'Add New Table', 
-                      color: Colors.green, 
-                      width: cardWidth,
-                      routeName: AppRouteNames.adminAddTable)
-                  ],
+                    );
+                  },
                 ),
-                Row(
-                  children: [
-                    _buildDashboardCard(
-                      context, 
-                      icon: Icons.edit_note_outlined, 
-                      label: 'Update Dish', 
-                      color: Colors.cyan, 
-                      width: cardWidth, 
-                      routeName: AppRouteNames.adminUpdateDishView),
-                    _buildDashboardCard(
-                      context, 
-                      icon: Icons.delete_outline, 
-                      label: 'Delete Table', 
-                      color: Colors.pink, 
-                      width: cardWidth, 
-                      routeName: AppRouteNames.adminTableDelete),
-                  ],
-                ),
-                Row(
-                  children: [
-                    _buildDashboardCard(
-                      context,
-                      icon: Icons.dashboard_outlined,
-                      label: 'Hero Dashboard',
-                      color: Colors.teal,
-                      width: cardWidth,
-                      routeName: AppRouteNames.adminHeroDashboard,
-                    ),
-                  ],
-                )
-              ],),
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildDashboardCard(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required Color color,
-    required double width,
-    required String routeName,
-  }) {
-    return InkWell(
-      onTap: () {
-        context.goNamed(routeName);
+  Widget _buildAnimatedRow(BuildContext context, List<Widget> children, int rowIndex) {
+    return TweenAnimationBuilder(
+      duration: Duration(milliseconds: 700 + rowIndex * 120),
+      tween: Tween(begin: 0.0, end: 1.0),
+      curve: Curves.easeOutBack,
+      builder: (context, animation, child) {
+        return Transform.scale(
+          scale: animation,
+          child: Row(children: children),
+        );
       },
-      borderRadius: BorderRadius.circular(12),
-      child: Card(
-        elevation: 4,
-        // ignore: deprecated_member_use
-        color: color.withOpacity(0.1),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: SizedBox(
-          width: width,
-          height: 150,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 48, color: color),
-              const SizedBox(height: 8),
-              Text(label,
-                  style: TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold, color: color)),
-            ],
+    );
+  }
+
+  Widget _buildEnhancedAppBar(BuildContext context) {
+    return TweenAnimationBuilder(
+      duration: const Duration(milliseconds: 1000),
+      tween: Tween(begin: 0.0, end: 1.0),
+      builder: (context, animation, child) {
+        final safeOpacity = animation.clamp(0.0, 1.0);
+        return Transform.translate(
+          offset: Offset(0, -50 * (1 - animation)),
+          child: Opacity(
+            opacity: safeOpacity,
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(25),
+                      onTap: () => context.goNamed(AppRouteNames.adminDashboard),
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacityFactor(0.2),
+                          borderRadius: BorderRadius.circular(25),
+                          border: Border.all(
+                            color: Colors.white.withOpacityFactor(0.4),
+                            width: 1.5,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacityFactor(0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Text(
+                          'ADMIN DASHBOARD',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withOpacityFactor(0.3),
+                                offset: const Offset(0, 2),
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
+    );
+  }
+
+  Widget _buildEnhancedDashboardCard(
+    BuildContext context, {
+      required IconData icon,
+      required String label,
+      required Color color,
+      required double width,
+      required String routeName,
+      int delay = 0,
+      bool isFullWidth = false,
+    }) {
+    return TweenAnimationBuilder(
+      duration: Duration(milliseconds: 800 + delay),
+      tween: Tween(begin: 0.0, end: 1.0),
+      curve: Curves.easeOutBack,
+      builder: (context, animation, child) {
+        return Transform.scale(
+          scale: animation,
+          child: Hero(
+            tag: routeName,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => context.goNamed(routeName),
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  width: width,
+                  height: isFullWidth ? 120 : 160,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        color.withOpacityFactor(0.1),
+                        color.withOpacityFactor(0.2),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: color.withOpacityFactor(0.3),
+                      width: 2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: color.withOpacityFactor(0.2),
+                        blurRadius: 15,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TweenAnimationBuilder(
+                        duration: Duration(milliseconds: 1000 + delay),
+                        tween: Tween(begin: 0.0, end: 1.0),
+                        builder: (context, iconAnimation, child) {
+                          return Transform.rotate(
+                            angle: 0.1 * (1 - iconAnimation),
+                            child: Container(
+                              padding: EdgeInsets.all(isFullWidth ? 12 : 16),
+                              decoration: BoxDecoration(
+                                color: color.withOpacityFactor(0.2),
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: color.withOpacityFactor(0.3),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                icon,
+                                size: isFullWidth ? 32 : 40,
+                                color: color,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: isFullWidth ? 8 : 12),
+                      Text(
+                        label,
+                        style: TextStyle(
+                          fontSize: isFullWidth ? 16 : 15,
+                          fontWeight: FontWeight.bold,
+                          color: color,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
