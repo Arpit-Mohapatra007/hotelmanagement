@@ -148,19 +148,6 @@ class AccountsDashboard extends HookConsumerWidget {
               ),
             ),
           ),
-          
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: const Icon(
-              Icons.account_balance_wallet_rounded,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
         ],
       ),
     );
