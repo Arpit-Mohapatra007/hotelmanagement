@@ -181,28 +181,6 @@ class OrderStatusWidget extends HookConsumerWidget {
               ),
             ),
           ),
-          
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: TweenAnimationBuilder<double>(
-              duration: const Duration(milliseconds: 1000),
-              tween: Tween<double>(begin: 0.0, end: 1.0),
-              builder: (context, animation, child) {
-                return Transform.rotate(
-                  angle: animation * 2 * 3.14159,
-                  child: const Icon(
-                    Icons.refresh_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                );
-              },
-            ),
-          ),
         ],
       ),
     );
