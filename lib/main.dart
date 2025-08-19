@@ -25,6 +25,12 @@ class App extends ConsumerWidget {
     return MaterialApp.router( 
       darkTheme: ThemeData(brightness: Brightness.dark),
       themeMode: ThemeMode.dark,
+      theme: ThemeData(
+        textTheme: Theme.of(context).textTheme.apply(
+          bodyColor: Colors.black,
+          displayColor: Colors.black,
+        ),
+      ),
       debugShowCheckedModeBanner: false,
       debugShowMaterialGrid: false,
       routerConfig: router,
