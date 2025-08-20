@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -83,92 +84,119 @@ class LoginPage extends HookWidget {
                 ),
               ),
               
+              // Wrap SingleChildScrollView with Expanded
               Expanded(
-                child: FadeTransition(
-                  opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-                            CurvedAnimation(parent: animationController, curve: Curves.easeInOut),
-                          ), 
-                  child: SlideTransition(
-                    position: Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(
-                                CurvedAnimation(parent: animationController, curve: Curves.elasticOut),
-                              ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Hero Logo Section
-                          Hero(
-                            tag: 'admin_logo',
-                            child: Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.3),
-                                  width: 2,
+                child: SingleChildScrollView(
+                  child: FadeTransition(
+                    opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
+                              CurvedAnimation(parent: animationController, curve: Curves.easeInOut),
+                            ), 
+                    child: SlideTransition(
+                      position: Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(
+                                  CurvedAnimation(parent: animationController, curve: Curves.elasticOut),
+                                ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Hero Logo Section
+                            Hero(
+                              tag: 'admin_logo',
+                              child: Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(30),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.3),
+                                    width: 2,
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.admin_panel_settings_rounded,
+                                  size: 80,
+                                  color: Colors.white,
                                 ),
                               ),
-                              child: const Icon(
-                                Icons.admin_panel_settings_rounded,
-                                size: 80,
+                            ),
+                            
+                            const SizedBox(height: 40),
+                            
+                            const Text(
+                              'Welcome Back',
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                             ),
-                          ),
-                          
-                          const SizedBox(height: 40),
-                          
-                          const Text(
-                            'Welcome Back',
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                            
+                            const SizedBox(height: 8),
+                            
+                            Text(
+                              'Please sign in to continue',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white.withOpacity(0.8),
+                              ),
                             ),
-                          ),
-                          
-                          const SizedBox(height: 8),
-                          
-                          Text(
-                            'Please sign in to continue',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white.withOpacity(0.8),
+                            
+                            const SizedBox(height: 50),
+                            
+                            // Email Field
+                            _buildGlassTextField(
+                              controller: emailController,
+                              hintText: 'Email Address',
+                              icon: Icons.email_outlined,
+                              isPassword: false,
                             ),
-                          ),
-                          
-                          const SizedBox(height: 50),
-                          
-                          // Email Field
-                          _buildGlassTextField(
-                            controller: emailController,
-                            hintText: 'Email Address',
-                            icon: Icons.email_outlined,
-                            isPassword: false,
-                          ),
-                          
-                          const SizedBox(height: 20),
-                          
-                          // Password Field
-                          _buildGlassTextField(
-                            controller: passwordController,
-                            hintText: 'Password',
-                            icon: Icons.lock_outlined,
-                            isPassword: true,
-                          ),
-                          
-                          const SizedBox(height: 40),
-                          
-                          // Login Button
-                          _buildAnimatedButton(
-                            onPressed: () {
-                              context.goNamed(AppRouteNames.adminDashboard);
-                            },
-                            text: 'Sign In',
-                          ),
-                        ],
+                            
+                            const SizedBox(height: 20),
+                            
+                            // Password Field
+                            _buildGlassTextField(
+                              controller: passwordController,
+                              hintText: 'Password',
+                              icon: Icons.lock_outlined,
+                              isPassword: true,
+                            ),
+                            
+                            const SizedBox(height: 40),
+                            
+                            // Login Button
+                            _buildAnimatedButton(
+                              onPressed: () {
+                                if (emailController.text.isNotEmpty &&
+                                    passwordController.text.isNotEmpty) {
+                                  FirebaseAuth.instance
+                                      .signInWithEmailAndPassword(
+                                    email: emailController.text.trim(),
+                                    password: passwordController.text.trim(),
+                                  )
+                                      .then((userCredential) {
+                                    context.goNamed(AppRouteNames.adminDashboard);
+                                  }).catchError((error) {
+                                    // Handle sign-in errors
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(error.toString()),
+                                      ),
+                                    );
+                                  });
+                                } else {
+                                  // Show error message or handle validation
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Please fill in all fields'),
+                                    ),
+                                  );
+                                }
+                              },
+                              text: 'Sign In',
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
