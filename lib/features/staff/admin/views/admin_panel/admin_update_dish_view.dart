@@ -434,8 +434,8 @@ class AdminUpdateDishView extends HookConsumerWidget {
           index: index,
           onEdit: () => context.goNamed(
             AppRouteNames.adminUpdateDish,
-            extra: dish.id, // ✅ FIX: Pass dish ID as String, not entire dish object
-          ),
+            extra: dish.id, 
+            ),
           onDelete: () async {
             final shouldDelete = await showDeleteDishDialog(context, dish: dish);
             if (!shouldDelete) return;
@@ -573,6 +573,7 @@ class AnimatedDishCard extends HookWidget {
                       Text(
                         dish.name,
                         style: const TextStyle(
+                          color: Colors.black87,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),

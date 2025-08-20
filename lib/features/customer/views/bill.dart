@@ -322,6 +322,7 @@ class BillView extends HookConsumerWidget {
                         Text(
                           item.dish.name,
                           style: const TextStyle(
+                            color: Colors.black87,
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
                           ),

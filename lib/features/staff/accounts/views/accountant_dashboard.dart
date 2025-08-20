@@ -17,8 +17,8 @@ class TableDisplayWidget extends ConsumerWidget {
     final tableAsync = ref.watch(getTableByIdProvider(tableId));
     return tableAsync.when(
       data: (table) => Text(
-        'Table: ${table?.tableNumber ?? tableId}',
-        style: const TextStyle(fontWeight: FontWeight.bold),
+        'Table: ${table?.tableNumber}',
+        style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.black87),
       ),
       loading: () => Text('Table: $tableId'),
       error: (_, __) => Text('Table: $tableId'),
@@ -414,7 +414,7 @@ class AccountsDashboard extends HookConsumerWidget {
                           'Items: ${order.dishes.length} • Status: ${order.status.toUpperCase()}',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey.withOpacity(0.6),
+                            color: Colors.black87,
                           ),
                         ),
                       ],

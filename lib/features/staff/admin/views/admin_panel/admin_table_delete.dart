@@ -566,6 +566,7 @@ class AnimatedTableCard extends HookWidget {
                       Text(
                         table.tableNumber,
                         style: const TextStyle(
+                          color: Colors.black87,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),

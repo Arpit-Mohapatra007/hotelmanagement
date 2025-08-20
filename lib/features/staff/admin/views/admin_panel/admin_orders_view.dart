@@ -540,6 +540,7 @@ class AnimatedOrderCard extends HookWidget {
                           Text(
                             'Order ID: ${order.orderId}',
                             style: const TextStyle(
+                              color: Colors.black87,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -579,9 +580,29 @@ class AnimatedOrderCard extends HookWidget {
                             const SizedBox(width: 8),
                             _buildStatusButton(
                               icon: Icons.payments_rounded,
-                              color: Colors.blue,
+                              color: Colors.pink,
                               isActive: order.status == OrderStatus.paid.name,
                               onPressed: () => onStatusUpdate(OrderStatus.paid.name),
+                            ),
+                          ]
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(width: 8),
+                            _buildStatusButton(
+                              icon: Icons.cancel_rounded,
+                              color: Colors.red,
+                              isActive: order.status == OrderStatus.cancelled.name,
+                              onPressed: () => onStatusUpdate(OrderStatus.cancelled.name),
+                            ),
+                            const SizedBox(width: 8),
+                            _buildStatusButton(
+                              icon: Icons.check_circle_rounded,
+                              color: Colors.blue,
+                              isActive: order.status == OrderStatus.ready.name,
+                              onPressed: () => onStatusUpdate(OrderStatus.ready.name),
                             ),
                           ],
                         ),
@@ -631,9 +652,11 @@ class AnimatedOrderCard extends HookWidget {
       case 'served':
         return Colors.green;
       case 'paid':
-        return Colors.blue;
+        return Colors.pink;
       case 'cancelled':
         return Colors.red;
+      case 'ready':
+        return Colors.blue;
       default:
         return Colors.grey;
     }
@@ -649,6 +672,8 @@ class AnimatedOrderCard extends HookWidget {
         return Icons.payments_rounded;
       case 'cancelled':
         return Icons.cancel_rounded;
+      case 'ready':
+        return Icons.check_circle_rounded;
       default:
         return Icons.help_rounded;
     }

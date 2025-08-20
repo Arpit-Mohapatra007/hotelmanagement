@@ -515,6 +515,7 @@ class OrderStatusWidget extends HookConsumerWidget {
                           child: Text(
                             entry.key,
                             style: const TextStyle(
+                              color: Colors.black87,
                               fontWeight: FontWeight.w500,
                               fontSize: 14,
                             ),

@@ -29,6 +29,7 @@ class TableDisplayWidget extends ConsumerWidget {
       data: (table) => Text(
         'Table: ${table?.tableNumber ?? tableId}',
         style: const TextStyle(
+          color: Colors.black87,
           fontWeight: FontWeight.bold,
           fontSize: 16,
         ),

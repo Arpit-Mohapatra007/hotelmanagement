@@ -312,7 +312,7 @@ class WaiterDashboard extends ConsumerWidget {
                 return Transform.translate(
                   offset: Offset(50 * (1 - animation), 0),
                   child: Opacity(
-                    opacity: animation.clamp(0.0, 1.0), // Fixed: Clamp opacity to valid range
+                    opacity: animation.clamp(0.0, 1.0), 
                     child: _buildEnhancedOrderCard(context, ref, filteredOrders[index]),
                   ),
                 );
@@ -456,7 +456,7 @@ class WaiterDashboard extends ConsumerWidget {
           tween: Tween<double>(begin: 0.0, end: 1.0),
           builder: (context, animation, child) {
             return Transform.scale(
-              scale: animation.clamp(0.0, 1.0), // Fixed: Clamp scale
+              scale: animation.clamp(0.0, 1.0), 
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -485,6 +485,7 @@ class WaiterDashboard extends ConsumerWidget {
               child: Text(
                 'Order ID: ${order.orderId}',
                 style: const TextStyle(
+                  color: Colors.black87,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),

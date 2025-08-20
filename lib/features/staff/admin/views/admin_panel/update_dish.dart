@@ -568,6 +568,7 @@ class AdminUpdateDish extends HookConsumerWidget {
             keyboardType: keyboardType,
             maxLines: maxLines,
             style: const TextStyle(
+              color: Colors.black87,
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),

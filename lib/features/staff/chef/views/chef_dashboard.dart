@@ -700,33 +700,11 @@ class ChefDashboard extends ConsumerWidget {
                     Icons.check_circle_rounded,
                     Colors.green,
                     () async {
-                      Navigator.pop(context);
-                      
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) => Center(
-                          child: Container(
-                            padding: const EdgeInsets.all(30),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                CircularProgressIndicator(),
-                                SizedBox(height: 20),
-                                Text('Processing order...'),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-
                       try {
-                        final deductionResult = await ref.read(deductInventoryForOrderProvider(order.orderId).future);
+                        // Pop the bottom sheet first to avoid navigation conflicts
                         Navigator.of(context).pop();
+                        
+                        final deductionResult = await ref.read(deductInventoryForOrderProvider(order.orderId).future);
 
                         if (deductionResult['success'] == true) {
                           final updatedOrder = order.copyWith(status: OrderStatus.ready.name);
@@ -742,35 +720,40 @@ class ChefDashboard extends ConsumerWidget {
                           }).future);
                           ref.invalidate(checkOrderIngredientsProvider(order.orderId));
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Row(
-                                children: [
-                                  const Icon(Icons.check_circle, color: Colors.white),
-                                  const SizedBox(width: 8),
-                                  Expanded(child: Text('Order ${order.orderId} ready! Ingredients deducted.')),
-                                ],
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Row(
+                                  children: [
+                                    const Icon(Icons.check_circle, color: Colors.white),
+                                    const SizedBox(width: 8),
+                                    Expanded(child: Text('Order ${order.orderId} ready! Ingredients deducted.')),
+                                  ],
+                                ),
+                                backgroundColor: Colors.green,
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                               ),
-                              backgroundColor: Colors.green,
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          );
+                            );
+                          }
                         } else {
                           final message = deductionResult['message'] as String;
-                          await showIngredientsUnavailableDialog(context, message);
+                          if (context.mounted) {
+                            await showIngredientsUnavailableDialog(context, message);
+                          }
                         }
                       } catch (e) {
-                        Navigator.of(context).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Error: $e'),
-                            backgroundColor: Colors.red,
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error: $e'),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
                       }
                     },
                   ),
